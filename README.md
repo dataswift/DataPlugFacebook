@@ -15,7 +15,7 @@
   http://localhost:3000?hat_token=12345
   ```
 
-3. Click "Sync with Facebook" to generate user access token
+3. Click "Sync with Facebook" to grant access rights and generate user access token
 
 4. Data is pulled from Facebook by visiting update endpoint hat access token as query parameter
 
