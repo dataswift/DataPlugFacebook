@@ -2,6 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var Accounts = require('../models/accounts');
+var FBmiddleware = require('../middleware/facebook');
 
 router.get('/', function(req, res, next) {
   if (req.query.code) {
@@ -18,6 +19,10 @@ router.get('/', function(req, res, next) {
         );
     });
   }
+});
+
+router.get('/update', FBmiddleware.loadDBentry, FBmiddleware.updateProfile, function(req, res, next) {
+  res.end();
 });
 
 module.exports = router;
