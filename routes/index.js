@@ -10,7 +10,8 @@ router.get('/', function(req, res, next) {
       {},
       { new: true, upsert: true },
       function(err, account) {
-        res.render('index', { title: 'HAT Sync Tools' });
+        req.session.hatToken = req.query.hat_token;
+        res.render('index', { title: 'HAT Sync Tools', facebookAppId: process.env.FB_APP_ID });
       }
     );
   } else {
