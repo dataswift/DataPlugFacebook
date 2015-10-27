@@ -25,4 +25,8 @@ router.get('/update', FBmiddleware.loadDBentry, FBmiddleware.updateProfile, func
   res.end();
 });
 
+router.get('/events/update', FBmiddleware.loadDBentry, FBmiddleware.updateEvents, function(req, res, next) {
+  res.end();
+});
+
 module.exports = router;
