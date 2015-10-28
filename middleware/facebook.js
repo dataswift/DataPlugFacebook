@@ -54,8 +54,9 @@ module.exports.updateEvents = function(req, res, next) {
         },
         method: 'post',
         json: true,
-        body: JSON.stringify({ name: fbObject.name })
+        body: { name: fbObject.name }
       }, function(err, response, body) {
+        console.log("DEBUG:", err, response, body)
         console.log(JSON.stringify({ name: fbObject.name }))
         console.log("Boom" + body);
       });
