@@ -2,7 +2,8 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var Accounts = require('../models/accounts');
-var FBmiddleware = require('../middleware/facebook');
+var fbMiddleware = require('../middleware/facebook');
+var fbConfig = require('../config/facebook');
 
 router.get('/', function(req, res, next) {
   if (req.query.code) {
@@ -21,12 +22,14 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/update', FBmiddleware.loadDBentry, FBmiddleware.updateProfile, function(req, res, next) {
+router.get('/update', fbMiddleware.loadDBentry, fbMiddleware.updateProfile, function(req, res, next) {
   res.end();
 });
 
-router.get('/events/update', FBmiddleware.loadDBentry, FBmiddleware.updateEvents, function(req, res, next) {
+router.get('/events/update', fbMiddleware.loadDBentry, fbMiddleware.updateEvents, function(req, res, next) {
   res.send("Cool, we're done.");
 });
+
+router.get('/events/init')
 
 module.exports = router;
