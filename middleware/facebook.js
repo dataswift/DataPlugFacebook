@@ -18,36 +18,50 @@ module.exports.updateProfile = function(req, res, next) {
 
 module.exports.updateEvents = function(req, res, next) {
 
-  var idMapping = {};
+  async.waterfall([
+    async.apply(getDataSourceModel, "1"),
+    mapDataSourceModel,
+    getFacebookData,
+    parseFacebookData,
+    postToHat
+  ], function(callback) {
+    next();
+  });
 
-  var mapDataSource = function(tree, prefix) {
+  function getDataSourceModel(dataSourceId, callback) {
+    request.get('http://localhost:8080/data/table/'+dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
+      dataModel = JSON.parse(body);
+      callback(null, dataModel, '', {});
+    });
+  }
+
+  function mapDataSourceModel(tree, prefix, collected, callback) {
     tree.fields.forEach(function(node) {
-      idMapping[prefix+'_'+node.name] = node.id;
+      collected[prefix+'_'+node.name] = node.id;
     });
 
     if (tree.subTables.length > 0) {
       tree.subTables.forEach(function(tree) {
-        mapDataSource(tree, tree.name);
+        mapDataSourceModel(tree, tree.name, collected, callback);
       });
+    } else {
+      callback(null, "events", collected);
     }
-  };
-
-  request.get('http://localhost:8080/data/table/1?access_token=' + req.account.hat_token, function(err, response, body) {
-    dataModel = JSON.parse(body);
-    mapDataSource(dataModel, '');
-  });
-
-  function replacer(key, value) {
-    if (typeof value === 'number' && key !== 'id') {
-      return value.toString();
-    }
-    return value;
   }
 
-  request.get('https://graph.facebook.com/me/events?access_token=' + req.account.facebook.user_access_token, function(err, response, body) {
-    fbData = JSON.parse(body).data;
+  function getFacebookData(type, dataSourceMapping, callback) {
+    request.get('https://graph.facebook.com/me/'+type+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
+      fbData = JSON.parse(body).data;
+      callback(null, dataSourceMapping, fbData);
+    });
+  }
 
-    var parseAndSubmit = function(fbObject, callback) {
+  function parseFacebookData(dataSourceMapping, fbData, callback) {
+    var dataToSubmit = [];
+
+
+
+    var parseAndSubmit = function(fbObject) {
       var hatRecord = [];
 
       var traverseObject = function(obj, prefix) {
@@ -58,7 +72,7 @@ module.exports.updateEvents = function(req, res, next) {
             var hatValueObject = {
               value: obj[key],
               field: {
-                id: idMapping[prefix+'_'+key],
+                id: dataSourceMapping[prefix+'_'+key],
                 name: key
               }
             };
@@ -68,7 +82,31 @@ module.exports.updateEvents = function(req, res, next) {
       };
 
       traverseObject(fbObject, '');
+      dataToSubmit.push(hatRecord);
+    };
 
+    fbData.forEach(function(fbEvent) {
+      parseAndSubmit(fbEvent);
+    });
+
+    callback(null, dataToSubmit);
+
+  }
+
+  function postToHat(dataToSubmit, callback) {
+
+    async.eachSeries(dataToSubmit, actualPost, function(err) {
+      next();
+    });
+
+    function replacer(key, value) {
+      if (typeof value === 'number' && key !== 'id') {
+        return value.toString();
+      }
+      return value;
+    }
+
+    function actualPost(actualPost, innerCallback) {
       request(
       {
         url: 'http://localhost:8080/data/record?access_token=' + req.account.hat_token,
@@ -80,7 +118,7 @@ module.exports.updateEvents = function(req, res, next) {
         },
         method: 'post',
         json: true,
-        body: { name: fbObject.name }
+        body: { name: "event" }
       }, function(err, response, body) {
         var recordId = body.id;
 
@@ -94,13 +132,13 @@ module.exports.updateEvents = function(req, res, next) {
             "Content-Type": "application/json"
           },
           method: 'post',
-          body: JSON.stringify(hatRecord, replacer)
+          body: JSON.stringify(actualPost, replacer)
         }, function(err, response, body) {
-          callback();
+          innerCallback();
+          console.log("Just posted to hat: " + body);
         });
       });
-    };
-    async.eachSeries(fbData, parseAndSubmit, next);
-  });
-};
+    }
+  }
+}
 
