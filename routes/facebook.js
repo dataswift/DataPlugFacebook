@@ -2,7 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var Accounts = require('../models/accounts');
-var fbMiddleware = require('../middleware/facebook');
+var fb = require('../middleware/facebook');
 var fbConfig = require('../config/facebook');
 
 router.get('/', function(req, res, next) {
@@ -22,11 +22,11 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/update', fbMiddleware.loadDBentry, fbMiddleware.updateProfile, function(req, res, next) {
+router.get('/update', fb.loadDBentry, fb.updateProfile, function(req, res, next) {
   res.end();
 });
 
-router.get('/events/update', fbMiddleware.loadDBentry, fbMiddleware.updateEvents, function(req, res, next) {
+router.get('/events/update', fb.loadDBentry, fb.updateEvents, fb.postToHat, function(req, res, next) {
   res.send("Cool, we're done.");
 });
 

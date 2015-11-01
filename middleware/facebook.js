@@ -1,6 +1,7 @@
 var request = require('request');
 var async = require('async');
 var Accounts = require('../models/accounts');
+var helpers = require('./helpers');
 
 module.exports.loadDBentry = function(req, res, next) {
   Accounts.findOne({ hat_token: req.query.hat_token }, function(err, account) {
@@ -21,10 +22,8 @@ module.exports.updateEvents = function(req, res, next) {
   async.waterfall([
     async.apply(getDataSourceModel, "1"),
     mapDataSourceModel,
-    getFacebookData,
-    parseFacebookData,
-    postToHat
-  ], function(callback) {
+    getFacebookData
+  ], function(err, result) {
     next();
   });
 
@@ -52,64 +51,41 @@ module.exports.updateEvents = function(req, res, next) {
   function getFacebookData(type, dataSourceMapping, callback) {
     request.get('https://graph.facebook.com/me/'+type+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
       fbData = JSON.parse(body).data;
-      callback(null, dataSourceMapping, fbData);
+      req.submissionData = helpers.convertDataToHat(dataSourceMapping, fbData);
+      callback(null);
     });
   }
+}
 
-  function parseFacebookData(dataSourceMapping, fbData, callback) {
-    var dataToSubmit = [];
+module.exports.postToHat = function(req, res, next) {
 
-
-
-    var parseAndSubmit = function(fbObject) {
-      var hatRecord = [];
-
-      var traverseObject = function(obj, prefix) {
-        Object.keys(obj).forEach(function(key) {
-          if (typeof(obj[key]) === 'object') {
-            traverseObject(obj[key], key);
-          } else {
-            var hatValueObject = {
-              value: obj[key],
-              field: {
-                id: dataSourceMapping[prefix+'_'+key],
-                name: key
-              }
-            };
-            hatRecord.push(hatValueObject);
-          }
-        });
-      };
-
-      traverseObject(fbObject, '');
-      dataToSubmit.push(hatRecord);
-    };
-
-    fbData.forEach(function(fbEvent) {
-      parseAndSubmit(fbEvent);
-    });
-
-    callback(null, dataToSubmit);
-
-  }
-
-  function postToHat(dataToSubmit, callback) {
-
-    async.eachSeries(dataToSubmit, actualPost, function(err) {
+  async.eachSeries(req.submissionData, postRecord, function(err) {
+    if (err) {
+      next(err);
+    } else {
       next();
-    });
-
-    function replacer(key, value) {
-      if (typeof value === 'number' && key !== 'id') {
-        return value.toString();
-      }
-      return value;
     }
+  });
 
-    function actualPost(actualPost, innerCallback) {
+  function postRecord(hatRecord, callback) {
+    request(
+    {
+      url: 'http://localhost:8080/data/record?access_token=' + req.account.hat_token,
+      headers: {
+        "User-Agent": "MyClient/1.0.0",
+        "Accept": "application/json",
+        "Host": "example.hatdex.org",
+        "Content-Type": "application/json"
+      },
+      method: 'post',
+      json: true,
+      body: { name: "event" }
+    }, function(err, response, body) {
+      var recordId = body.id;
+
       request(
       {
-        url: 'http://localhost:8080/data/record?access_token=' + req.account.hat_token,
+        url: 'http://localhost:8080/data/record/' + recordId + '/values?access_token=' + req.account.hat_token,
         headers: {
           "User-Agent": "MyClient/1.0.0",
           "Accept": "application/json",
@@ -117,28 +93,17 @@ module.exports.updateEvents = function(req, res, next) {
           "Content-Type": "application/json"
         },
         method: 'post',
-        json: true,
-        body: { name: "event" }
+        body: JSON.stringify(hatRecord, helpers.hatFormat)
       }, function(err, response, body) {
-        var recordId = body.id;
-
-        request(
-        {
-          url: 'http://localhost:8080/data/record/' + recordId + '/values?access_token=' + req.account.hat_token,
-          headers: {
-            "User-Agent": "MyClient/1.0.0",
-            "Accept": "application/json",
-            "Host": "example.hatdex.org",
-            "Content-Type": "application/json"
-          },
-          method: 'post',
-          body: JSON.stringify(actualPost, replacer)
-        }, function(err, response, body) {
-          innerCallback();
+        if (err) {
+          callback(err);
+        } else {
+          callback();
           console.log("Just posted to hat: " + body);
-        });
+        }
       });
-    }
+    });
   }
 }
+
 
