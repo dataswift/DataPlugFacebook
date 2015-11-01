@@ -22,11 +22,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/update', fb.loadDBentry, fb.updateProfile, function(req, res, next) {
-  res.end();
-});
-
-router.get('/events/update', fb.loadDBentry, fb.updateEvents, fb.postToHat, function(req, res, next) {
+router.get('/:nodeName/update', fb.setReqContext, fb.getDataSourceModel, fb.getFbData, fb.postToHat, function(req, res, next) {
   res.send("Cool, we're done.");
 });
 

@@ -1,9 +1,26 @@
+var _ = require('lodash');
+
 var helpers = {
   hatFormat: function (key, value) {
     if (typeof value === 'number' && key !== 'id') {
       return value.toString();
     }
     return value;
+  },
+
+  mapDataSourceModel: function(tree, prefix) {
+    var idMapping = {};
+    tree.fields.forEach(function(node) {
+      idMapping[prefix+'_'+node.name] = node.id;
+    });
+
+    if (tree.subTables.length > 0){
+      tree.subTables.map(function(subTree) {
+        var mappedSubTree = this.mapDataSourceModel(subTree, subTree.name);
+        idMapping = _.defaults(idMapping, mappedSubTree);
+      }, this);
+    }
+    return idMapping;
   },
 
   convertDataToHat: function(idMapping, data) {

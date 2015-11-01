@@ -3,62 +3,31 @@ var async = require('async');
 var Accounts = require('../models/accounts');
 var helpers = require('./helpers');
 
-module.exports.loadDBentry = function(req, res, next) {
+module.exports.setReqContext = function(req, res, next) {
   Accounts.findOne({ hat_token: req.query.hat_token }, function(err, account) {
     req.account = account;
+    req.dataSourceId = '1';
     next();
   });
 };
 
-module.exports.updateProfile = function(req, res, next) {
-  request.get('https://graph.facebook.com/me?fields=id,name&access_token=' + req.account.facebook.user_access_token, function(err, response, body) {
-    console.log(body);
+module.exports.getDataSourceModel = function(req, res, next) {
+  request.get('http://localhost:8080/data/table/'+req.dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
+    dataModel = JSON.parse(body);
+    req.idMapping = helpers.mapDataSourceModel(dataModel, '');
     next();
   });
-};
+}
 
-module.exports.updateEvents = function(req, res, next) {
-
-  async.waterfall([
-    async.apply(getDataSourceModel, "1"),
-    mapDataSourceModel,
-    getFacebookData
-  ], function(err, result) {
+module.exports.getFbData = function(req, res, next) {
+  request.get('https://graph.facebook.com/me/'+req.params.nodeName+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
+    fbData = JSON.parse(body).data;
+    req.submissionData = helpers.convertDataToHat(req.idMapping, fbData);
     next();
   });
-
-  function getDataSourceModel(dataSourceId, callback) {
-    request.get('http://localhost:8080/data/table/'+dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
-      dataModel = JSON.parse(body);
-      callback(null, dataModel, '', {});
-    });
-  }
-
-  function mapDataSourceModel(tree, prefix, collected, callback) {
-    tree.fields.forEach(function(node) {
-      collected[prefix+'_'+node.name] = node.id;
-    });
-
-    if (tree.subTables.length > 0) {
-      tree.subTables.forEach(function(tree) {
-        mapDataSourceModel(tree, tree.name, collected, callback);
-      });
-    } else {
-      callback(null, "events", collected);
-    }
-  }
-
-  function getFacebookData(type, dataSourceMapping, callback) {
-    request.get('https://graph.facebook.com/me/'+type+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
-      fbData = JSON.parse(body).data;
-      req.submissionData = helpers.convertDataToHat(dataSourceMapping, fbData);
-      callback(null);
-    });
-  }
 }
 
 module.exports.postToHat = function(req, res, next) {
-
   async.eachSeries(req.submissionData, postRecord, function(err) {
     if (err) {
       next(err);
