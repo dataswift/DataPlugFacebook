@@ -3,29 +3,36 @@ var async = require('async');
 var Accounts = require('../models/accounts');
 var helpers = require('./helpers');
 
-module.exports.setReqContext = function(req, res, next) {
+module.exports.getProviderAuthToken = function(req, res, next) {
   Accounts.findOne({ hat_token: req.query.hat_token }, function(err, account) {
     req.account = account;
-    req.dataSourceId = '1';
+    next();
+  });
+};
+
+module.exports.getDataSourceId = function(req, res, next) {
+  request.get('http://localhost:8080/data/table/search?access_token='+req.account.hat_token+'&name='+req.params.nodeName+'&source=facebook', function(err, response, body) {
+    var dataSourceId = JSON.parse(body).id;
+    req.dataSourceId = dataSourceId;
     next();
   });
 };
 
 module.exports.getDataSourceModel = function(req, res, next) {
   request.get('http://localhost:8080/data/table/'+req.dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
-    dataModel = JSON.parse(body);
+    var dataModel = JSON.parse(body);
     req.idMapping = helpers.mapDataSourceModel(dataModel, '');
     next();
   });
-}
+};
 
 module.exports.getFbData = function(req, res, next) {
   request.get('https://graph.facebook.com/me/'+req.params.nodeName+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
-    fbData = JSON.parse(body).data;
+    var fbData = JSON.parse(body).data;
     req.submissionData = helpers.convertDataToHat(req.idMapping, fbData);
     next();
   });
-}
+};
 
 module.exports.postToHat = function(req, res, next) {
   async.eachSeries(req.submissionData, postRecord, function(err) {
@@ -73,6 +80,6 @@ module.exports.postToHat = function(req, res, next) {
       });
     });
   }
-}
+};
 
 

@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/:nodeName/update', fb.setReqContext, fb.getDataSourceModel, fb.getFbData, fb.postToHat, function(req, res, next) {
+router.get('/:nodeName/update', fb.getProviderAuthToken, fb.getDataSourceId, fb.getDataSourceModel, fb.getFbData, fb.postToHat, function(req, res, next) {
   res.send("Cool, we're done.");
 });
 
