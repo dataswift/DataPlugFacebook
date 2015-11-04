@@ -1,8 +1,8 @@
 var configVars = {
-  hatBaseUrl: 'http://localhost:8080',
-  appBaseUrl: 'http://localhost:3000',
+  hatBaseUrl: 'http://smart-e.org:8080',
+  appBaseUrl: 'https://salty-beach-7387.herokuapp.com',
   fbBaseUrl: 'https://graph.facebook.com',
-  hatAccessToken: 'df4545665drgdfg'
+  hatAccessToken: '7c94a0a3-a6c4-4e9f-b4be-d1fdd892713f'
 };
 
 module.exports = configVars;

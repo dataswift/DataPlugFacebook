@@ -33,7 +33,11 @@ app.use('/', routes);
 app.use('/facebook', facebook);
 
 // mongoose
-mongoose.connect('mongodb://localhost:27017/HAT_sync_accounts');
+if (process.env.MONGOLAB_URI) {
+  mongoose.connect(MONGOLAB_URI);
+} else {
+  mongoose.connect('mongodb://localhost:27017/HAT_sync_accounts');
+}
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);
