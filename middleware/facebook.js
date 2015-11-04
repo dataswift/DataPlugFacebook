@@ -59,7 +59,7 @@ module.exports.getFbData = function(req, res, next) {
 };
 
 module.exports.postToHat = function(req, res, next) {
-  async.eachSeries(req.submissionData, postRecord, function(err) {
+  async.forEachOfSeries(req.submissionData, postRecord, function(err) {
     if (err) {
       next(err);
     } else {
@@ -67,7 +67,7 @@ module.exports.postToHat = function(req, res, next) {
     }
   });
 
-  function postRecord(hatRecord, callback) {
+  function postRecord(hatRecord, key, callback) {
     request(
     {
       url: appConfig.hatBaseUrl+'/data/record?access_token=' + req.account.hat_token,
@@ -79,7 +79,7 @@ module.exports.postToHat = function(req, res, next) {
       },
       method: 'post',
       json: true,
-      body: { name: "event" }
+      body: { name: req.params.nodeName + key }
     }, function(err, response, body) {
       var recordId = body.id;
       request(
