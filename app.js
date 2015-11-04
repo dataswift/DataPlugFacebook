@@ -34,7 +34,7 @@ app.use('/facebook', facebook);
 
 // mongoose
 if (process.env.MONGOLAB_URI) {
-  mongoose.connect(MONGOLAB_URI);
+  mongoose.connect(process.env.MONGOLAB_URI);
 } else {
   mongoose.connect('mongodb://localhost:27017/HAT_sync_accounts');
 }
