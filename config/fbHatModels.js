@@ -86,6 +86,59 @@ var hatDataSourceConfig = {
         ]
       }
     ]
+  },
+  profile: {
+    name: "profile",
+    source: "facebook",
+    fields: [
+      { name: "id" },
+      { name: "birthday" },
+      { name: "email" },
+      { name: "first_name" },
+      { name: "gender" },
+      { name: "is_verified" },
+      { name: "last_name" },
+      { name: "locale" },
+      { name: "name" },
+      { name: "political" },
+      { name: "relationship_status" },
+      { name: "religion" },
+      { name: "quotes" },
+      { name: "third_party_id" },
+      { name: "timezone" },
+      { name: "updated_time" },
+      { name: "verified" },
+      { name: "website" }
+    ],
+    subTables: [
+      {
+        name: "hometown",
+        source: "facebook",
+        fields: [
+          { name: "id" },
+          { name: "name" }
+        ]
+      }, {
+        name: "security_settings",
+        source: "facebook",
+        subTables: [
+          {
+            name: "secure_browsing",
+            source: "facebook",
+            fields: [
+              { name: "enabled" }
+            ]
+          }
+        ]
+      }, {
+        name: "significant_other",
+        source: "facebook",
+        fields: [
+          { name: "id" },
+          { name: "name" }
+        ]
+      }
+    ]
   }
 }
 

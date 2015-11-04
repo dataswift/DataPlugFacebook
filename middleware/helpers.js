@@ -4,6 +4,8 @@ var helpers = {
   hatFormat: function (key, value) {
     if (typeof value === 'number' && key !== 'id') {
       return value.toString();
+    } else if (typeof value === 'boolean') {
+      return value.toString();
     }
     return value;
   },

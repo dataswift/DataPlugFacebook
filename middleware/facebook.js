@@ -36,7 +36,8 @@ module.exports.getFbData = function(req, res, next) {
     requestUri += req.params.nodeName+'?access_token='+req.account.facebook.user_access_token;
   } else if (req.params.nodeName === 'posts') {
     requestUri += 'feed?access_token='+req.account.facebook.user_access_token + fbQueryGenerator.getQueryString('post');
-    console.log(requestUri);
+  } else if (req.params.nodeName === 'profile') {
+    requestUri += '?access_token='+req.account.facebook.user_access_token + fbQueryGenerator.getQueryString('user');
   }
 
   request.get(requestUri, function(err, response, body) {
@@ -47,7 +48,11 @@ module.exports.getFbData = function(req, res, next) {
       fbError.facebookError = fbData.error;
       return next(fbError);
     }
-    req.submissionData = helpers.convertDataToHat(req.idMapping, fbData.data);
+    if (req.params.nodeName === 'profile') {
+      req.submissionData = helpers.convertDataToHat(req.idMapping, [fbData]);
+    } else {
+      req.submissionData = helpers.convertDataToHat(req.idMapping, fbData.data);
+    }
     next();
   });
 };
@@ -76,7 +81,6 @@ module.exports.postToHat = function(req, res, next) {
       body: { name: "event" }
     }, function(err, response, body) {
       var recordId = body.id;
-
       request(
       {
         url: 'http://localhost:8080/data/record/' + recordId + '/values?access_token=' + req.account.hat_token,
