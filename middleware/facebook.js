@@ -1,11 +1,12 @@
 var request = require('request');
 var async = require('async');
 var Accounts = require('../models/accounts');
+var appConfig = require('../config');
 var helpers = require('./helpers');
 var fbQueryGenerator = require('../config/fbFields');
 
 module.exports.getProviderAuthToken = function(req, res, next) {
-  Accounts.findOne({ hat_token: req.query.hat_token }, function(err, account) {
+  Accounts.findOne({ hat_token: appConfig.hatAccessToken }, function(err, account) {
     if (err) return next(err);
     req.account = account;
     next();
@@ -13,7 +14,7 @@ module.exports.getProviderAuthToken = function(req, res, next) {
 };
 
 module.exports.getDataSourceId = function(req, res, next) {
-  request.get('http://localhost:8080/data/table/search?access_token='+req.account.hat_token+'&name='+req.params.nodeName+'&source=facebook', function(err, response, body) {
+  request.get(appConfig.hatBaseUrl+'/data/table/search?access_token='+req.account.hat_token+'&name='+req.params.nodeName+'&source=facebook', function(err, response, body) {
     if (err) return next(err);
     var dataSourceId = JSON.parse(body).id;
     req.dataSourceId = dataSourceId;
@@ -22,7 +23,7 @@ module.exports.getDataSourceId = function(req, res, next) {
 };
 
 module.exports.getDataSourceModel = function(req, res, next) {
-  request.get('http://localhost:8080/data/table/'+req.dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
+  request.get(appConfig.hatBaseUrl+'/data/table/'+req.dataSourceId+'?access_token='+req.account.hat_token, function(err, response, body) {
     if (err) return next(err);
     var dataModel = JSON.parse(body);
     req.idMapping = helpers.mapDataSourceModel(dataModel, '');
@@ -31,7 +32,7 @@ module.exports.getDataSourceModel = function(req, res, next) {
 };
 
 module.exports.getFbData = function(req, res, next) {
-  var requestUri = 'https://graph.facebook.com/me/';
+  var requestUri = appConfig.fbBaseUrl+'/me/';
   if (req.params.nodeName === 'events') {
     requestUri += req.params.nodeName+'?access_token='+req.account.facebook.user_access_token;
   } else if (req.params.nodeName === 'posts') {
@@ -69,7 +70,7 @@ module.exports.postToHat = function(req, res, next) {
   function postRecord(hatRecord, callback) {
     request(
     {
-      url: 'http://localhost:8080/data/record?access_token=' + req.account.hat_token,
+      url: appConfig.hatBaseUrl+'/data/record?access_token=' + req.account.hat_token,
       headers: {
         "User-Agent": "MyClient/1.0.0",
         "Accept": "application/json",
@@ -83,7 +84,7 @@ module.exports.postToHat = function(req, res, next) {
       var recordId = body.id;
       request(
       {
-        url: 'http://localhost:8080/data/record/' + recordId + '/values?access_token=' + req.account.hat_token,
+        url: appConfig.hatBaseUrl+'/data/record/' + recordId + '/values?access_token=' + req.account.hat_token,
         headers: {
           "User-Agent": "MyClient/1.0.0",
           "Accept": "application/json",
