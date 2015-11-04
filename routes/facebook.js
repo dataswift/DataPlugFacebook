@@ -3,7 +3,7 @@ var request = require('request');
 var router = express.Router();
 var Accounts = require('../models/accounts');
 var fb = require('../middleware/facebook');
-var fbConfig = require('../config/facebook');
+var fbConfig = require('../config/fbHatModels');
 
 router.get('/', function(req, res, next) {
   if (req.query.code) {
@@ -24,6 +24,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/:nodeName/update', fb.getProviderAuthToken, fb.getDataSourceId, fb.getDataSourceModel, fb.getFbData, fb.postToHat, function(req, res, next) {
   res.send("Cool, we're done.");
-})
+});
 
 module.exports = router;

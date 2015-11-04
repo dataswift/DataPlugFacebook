@@ -6,7 +6,7 @@ var facebookQueryFields_v_2_5 = {
      'place', 'privacy', 'properties', 'shares', 'source', 'status_type', 'story',
      'targeting', 'to', 'type', 'updated_time', 'with_tags'],
     availableEdges: ['likes', 'comments', 'sharedposts', 'insights', 'attachments'],
-    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'place', 'privacy', 'shares', 'status_type', 'story', 'type', 'updated_time']
+    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
   },
 
   getQueryString: function(node) {
@@ -14,4 +14,4 @@ var facebookQueryFields_v_2_5 = {
   }
 };
 
-module.exports = facebookQueryFields;
+module.exports = facebookQueryFields_v_2_5;

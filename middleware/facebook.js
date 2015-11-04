@@ -2,6 +2,7 @@ var request = require('request');
 var async = require('async');
 var Accounts = require('../models/accounts');
 var helpers = require('./helpers');
+var fbQueryGenerator = require('../config/fbFields');
 
 module.exports.getProviderAuthToken = function(req, res, next) {
   Accounts.findOne({ hat_token: req.query.hat_token }, function(err, account) {
@@ -30,7 +31,15 @@ module.exports.getDataSourceModel = function(req, res, next) {
 };
 
 module.exports.getFbData = function(req, res, next) {
-  request.get('https://graph.facebook.com/me/'+req.params.nodeName+'?access_token='+req.account.facebook.user_access_token, function(err, response, body) {
+  var requestUri = 'https://graph.facebook.com/me/';
+  if (req.params.nodeName === 'events') {
+    requestUri += req.params.nodeName+'?access_token='+req.account.facebook.user_access_token;
+  } else if (req.params.nodeName === 'posts') {
+    requestUri += 'feed?access_token='+req.account.facebook.user_access_token + fbQueryGenerator.getQueryString('post');
+    console.log(requestUri);
+  }
+
+  request.get(requestUri, function(err, response, body) {
     if (err) return next(err);
     var fbData = JSON.parse(body);
     if (fbData.error) {

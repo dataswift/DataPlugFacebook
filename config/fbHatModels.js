@@ -37,6 +37,55 @@ var hatDataSourceConfig = {
         ]
       }
     ]
+  },
+  posts: {
+    name: "posts",
+    source: "facebook",
+    fields: [
+      { name: "id" },
+      { name: "caption" },
+      { name: "created_time" },
+      { name: "description" },
+      { name: "link" },
+      { name: "message" },
+      { name: "name" },
+      { name: "object_id" },
+      { name: "picture" },
+      { name: "status_type" },
+      { name: "story" },
+      { name: "type" },
+      { name: "updated_time" }
+    ],
+    subTables: [
+      {
+        name: "from",
+        source: "facebook",
+        fields: [
+          { name: "name" },
+          { name: "id" }
+        ]
+      }, {
+        name: "privacy",
+        source: "facebook",
+        fields: [
+          { name: "value" },
+          { name: "description" },
+          { name: "friends" },
+          { name: "allow" },
+          { name: "deny" }
+        ]
+      }, {
+        name: "application",
+        source: "facebook",
+        fields: [
+          { name: "category" },
+          { name: "link" },
+          { name: "name" },
+          { name: "namespace" },
+          { name: "id" }
+        ]
+      }
+    ]
   }
 }
 
