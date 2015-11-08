@@ -1,5 +1,6 @@
 var request = require('request');
 var async = require('async');
+var qs = require('qs');
 var Accounts = require('../models/accounts');
 var appConfig = require('../config');
 var helpers = require('./helpers');
@@ -14,11 +15,18 @@ module.exports.getProviderAuthToken = function(req, res, next) {
 };
 
 module.exports.getDataSourceId = function(req, res, next) {
-  request.get(appConfig.hatBaseUrl+'/data/table/search?access_token='+req.account.hat_token+'&name='+req.params.nodeName+'&source=facebook', function(err, response, body) {
+  request({
+    url: appConfig.hatBaseUrl+'/data/table/search?',
+    qs: {
+      access_token: req.account.hat_token,
+      name: req.params.nodeName,
+      source: 'facebook'
+    }}, function(err, response, body) {
     if (err) return next(err);
+    console.log(body);
     var dataSourceId = JSON.parse(body).id;
     req.dataSourceId = dataSourceId;
-    next();
+    next(new Error('big big error'));
   });
 };
 

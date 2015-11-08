@@ -4,6 +4,7 @@ var router = express.Router();
 var Accounts = require('../models/accounts');
 var appConfig = require('../config');
 var fb = require('../middleware/facebook');
+var fbToHat = require('../middleware/fbToHat');
 var fbConfig = require('../config/fbHatModels');
 
 router.get('/', function(req, res, next) {
@@ -43,7 +44,9 @@ router.get('/:nodeName/init', fb.getProviderAuthToken, function(req, res, next) 
     });
 });
 
-router.get('/:nodeName/update', fb.getProviderAuthToken, fb.getDataSourceId, fb.getDataSourceModel, fb.getFbData, fb.postToHat, function(req, res, next) {
+router.get('/:nodeName/update', fb.getProviderAuthToken, function(req, res, next) {
+  fbToHat.initialize(req.params.nodeName, req.query.hat_token, req.account.facebook.user_access_token);
+  fbToHat.fetchData();
   res.send("Cool, we're done.");
 });
 
