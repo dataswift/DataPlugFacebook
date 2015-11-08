@@ -25,24 +25,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-router.get('/:nodeName/init', fb.getProviderAuthToken, function(req, res, next) {
-  request(
-    {
-      url: appConfig.hatBaseUrl+'/data/table?access_token=' + req.account.hat_token,
-      headers: {
-        "User-Agent": "MyClient/1.0.0",
-        "Accept": "application/json",
-        "Host": "example.hatdex.org",
-        "Content-Type": "application/json"
-      },
-      method: 'post',
-      json: true,
-      body: fbConfig[req.params.nodeName]
-    }, function(err, response, body) {
-      if (err) return next(err);
-      res.send(req.params.nodeName + ' source model was successfully created.');
-    });
-});
+router.get('/:nodeName/init', fbToHat.postDataSourceModel);
 
 router.get('/:nodeName/update', fb.getProviderAuthToken, function(req, res, next) {
   fbToHat.initialize(req.params.nodeName, req.query.hat_token, req.account.facebook.user_access_token);

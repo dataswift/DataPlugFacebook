@@ -3,6 +3,7 @@ var qs = require('qs');
 var async = require('async');
 var _ = require('lodash');
 var config = require('../config');
+var fbFieldsConfig = require('../config/fbHatModels');
 var fbQuertGenerator = require('../config/fbFields');
 
 module.exports = (function() {
@@ -15,6 +16,20 @@ module.exports = (function() {
     state.graphAccessToken = graphAccessToken || '';
     state.data = [];
   };
+
+  publicObject.postDataSourceModel = function(req, res, next) {
+    request({
+      url: config.hatBaseUrl+'/data/table',
+      qs: { access_token: state.hatAccessToken },
+      headers: config.headers,
+      method: 'POST',
+      json: true,
+      body: fbFieldsConfig[req.params.nodeName]
+    }, function (err, response, body) {
+      if (err) return next(err);
+      res.send(req.params.nodeName + ' source model was successfully created.');
+    });
+  }
 
   publicObject.fetchData = function() {
     async.parallel([getGraphData, fetchHatInfo], function(err, results) {
