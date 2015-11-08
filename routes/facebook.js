@@ -47,6 +47,9 @@ router.get('/:nodeName/init', fb.getProviderAuthToken, function(req, res, next) 
 router.get('/:nodeName/update', fb.getProviderAuthToken, function(req, res, next) {
   fbToHat.initialize(req.params.nodeName, req.query.hat_token, req.account.facebook.user_access_token);
   fbToHat.fetchData();
+  setTimeout(function() {
+    fbToHat.postRecords();
+  }, 1000);
   res.send("Cool, we're done.");
 });
 

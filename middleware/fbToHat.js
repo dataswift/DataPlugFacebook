@@ -26,6 +26,56 @@ module.exports = (function() {
     });
   };
 
+  publicObject.postRecords = function() {
+    async.forEachOfSeries(state.data,
+      function(record, index, callback) {
+        async.waterfall([
+          async.apply(createNewRecord, state.node+index, record),
+          postRecordValues
+        ], function (err) {
+          if (err) return callback(err);
+          return callback(null);
+        });
+      }, function(err) {
+        // TODO: handle errors here
+      });
+  }
+
+  function createNewRecord(recordName, record, callback) {
+    request({
+      url: config.hatBaseUrl+'/data/record',
+      qs: { access_token: state.hatAccessToken },
+      headers: config.headers,
+      method: 'POST',
+      json: true,
+      body: { name: recordName }
+    }, function (err, response, body) {
+      if (err) return callback(err);
+      console.log('Created new HAT record '+body.name);
+      return callback(null, body, record);
+    });
+  }
+
+  function postRecordValues(recordInfo, record, callback) {
+    request({
+      url: config.hatBaseUrl+'/data/record/'+recordInfo.id+'/values',
+      qs: { access_token: state.hatAccessToken },
+      headers: {
+        "User-Agent": "MyClient/1.0.0",
+        "Accept": "application/json",
+        "Host": "example.hatdex.org",
+        "Content-Type": "application/json"
+      },
+      method: 'POST',
+      body: JSON.stringify(record, hatJsonFormat)
+    }, function (err, response, body) {
+      if (err) return callback(err);
+      console.log('Updated values for '+recordInfo.name+' record');
+      console.log(body);
+      callback(null);
+    });
+  }
+
   function fetchHatInfo(cb) {
     async.waterfall([
       getDataSourceId,
@@ -157,6 +207,8 @@ module.exports = (function() {
     });
     return convertedData;
   }
+
+
 
   return publicObject;
 
