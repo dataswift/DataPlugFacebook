@@ -10,12 +10,22 @@ module.exports = (function() {
   var publicObject = {};
   var state = {};
 
-  publicObject.initialize = function(node, hatAccessToken, graphAccessToken) {
-    state.node = node || '';
-    state.hatAccessToken = hatAccessToken || '';
-    state.graphAccessToken = graphAccessToken || '';
-    state.data = [];
-  };
+  publicObject.initialRun = function(node, hatAccessToken, graphAccessToken, req, next) {
+    initialize(node, hatAccessToken, graphAccessToken);
+    async.waterfall([
+      publicObject.fetchData,
+      publicObject.postRecords
+    ], function(err) {
+      if (err) return next(err);
+      if (node === 'posts') {
+        req.session[node+'update_link'] = state[node+'update_link'];
+      }
+      req.session['last_'+node+'_update'] = state.lastUpdated;
+
+      return next();
+
+    });
+  }
 
   publicObject.postDataSourceModel = function(req, res, next) {
     request({
@@ -31,17 +41,19 @@ module.exports = (function() {
     });
   }
 
-  publicObject.fetchData = function() {
+  publicObject.fetchData = function(callback) {
     async.parallel([getGraphData, fetchHatInfo], function(err, results) {
       /* WARNING: executes asynchronously */
-      results[0].forEach(function(node) {
+      results[0].data.forEach(function(node) {
         var convertedNode = transformFbToHat(node, results[1], '');
         state.data.push(convertedNode);
       });
+
+      callback(null);
     });
   };
 
-  publicObject.postRecords = function() {
+  publicObject.postRecords = function(callb) {
     async.forEachOfSeries(state.data,
       function(record, index, callback) {
         async.waterfall([
@@ -52,9 +64,18 @@ module.exports = (function() {
           return callback(null);
         });
       }, function(err) {
-        // TODO: handle errors here
+        callb(null);
       });
   }
+
+  function initialize(node, hatAccessToken, graphAccessToken) {
+    state.node = node || '';
+    state.hatAccessToken = hatAccessToken || '';
+    state.graphAccessToken = graphAccessToken || '';
+    state.updateLink = '';
+    state.lastUpdated = null;
+    state.data = [];
+  };
 
   function createNewRecord(recordName, record, callback) {
     request({
@@ -177,10 +198,17 @@ module.exports = (function() {
       json: true
     }, function (err, response, body) {
       if (err) return callback(err);
+
+      state.lastUpdated = Date.now();
+
+      if (body.paging.previous) {
+        state.updateLink = body.paging.previous;
+      }
+
       if (state.node === 'profile') {
         return callback(null, [body]);
       } else {
-        return callback(null, body.data);
+        return callback(null, body);
       }
     });
   }

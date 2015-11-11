@@ -3,9 +3,28 @@ var request = require('request');
 var router = express.Router();
 var Accounts = require('../models/accounts');
 var appConfig = require('../config');
-var fb = require('../middleware/facebook');
 var fbToHat = require('../middleware/fbToHat');
 var fbConfig = require('../config/fbHatModels');
+
+function getProviderAuthToken(req, res, next) {
+  Accounts.findOne({ hat_token: appConfig.hatAccessToken }, function(err, account) {
+    if (err) return next(err);
+    req.account = account;
+    next();
+  });
+}
+
+function updateDatabase(req, res, next) {
+  var databaseUpdateKey = {};
+  databaseUpdateKey['last_'+req.params.nodeName+'_update'] = req.session['last_'+req.params.nodeName+'_update'];
+  Accounts.findOneAndUpdate(
+    { hat_token: req.query.hat_token },
+    databaseUpdateKey,
+    function(err, account) {
+      if (err) return next(err);
+      res.send("Cool, we're done.");
+    });
+}
 
 router.get('/', function(req, res, next) {
   if (req.query.code) {
@@ -15,25 +34,19 @@ router.get('/', function(req, res, next) {
         var parsedBody = JSON.parse(body);
         Accounts.findOneAndUpdate(
           { hat_token: req.session.hatToken },
-          { facebook: { user_access_token: parsedBody.access_token } },
+          { graph_access_token: parsedBody.access_token },
           function(err, account) {
             if (err) return next(err);
             res.send('Access token generated!');
-          }
-        );
+          });
     });
   }
 });
 
 router.get('/:nodeName/init', fbToHat.postDataSourceModel);
 
-router.get('/:nodeName/update', fb.getProviderAuthToken, function(req, res, next) {
-  fbToHat.initialize(req.params.nodeName, req.query.hat_token, req.account.facebook.user_access_token);
-  fbToHat.fetchData();
-  setTimeout(function() {
-    fbToHat.postRecords();
-  }, 1000);
-  res.send("Cool, we're done.");
-});
+router.get('/:nodeName/update', getProviderAuthToken, function(req, res, next) {
+  var state = fbToHat.initialRun(req.params.nodeName, req.query.hat_token, req.account.graph_access_token, req, next);
+}, updateDatabase);
 
 module.exports = router;
