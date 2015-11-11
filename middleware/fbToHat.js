@@ -17,9 +17,22 @@ module.exports = (function() {
       publicObject.postRecords
     ], function(err) {
       if (err) return next(err);
-      if (node === 'posts') {
-        req.session[node+'update_link'] = state[node+'update_link'];
-      }
+
+      req.session['last_'+node+'_update'] = state.lastUpdated;
+
+      return next();
+
+    });
+  }
+
+  publicObject.updateRun = function(node, hatAccessToken, graphAccessToken, lastUpdated) {
+    initialize(node, hatAccessToken, graphAccessToken, lastUpdated);
+    async.waterfall([
+      publicObject.fetchData,
+      publicObject.postRecords
+    ], function(err) {
+      if (err) return next(err);
+
       req.session['last_'+node+'_update'] = state.lastUpdated;
 
       return next();
@@ -44,7 +57,7 @@ module.exports = (function() {
   publicObject.fetchData = function(callback) {
     async.parallel([getGraphData, fetchHatInfo], function(err, results) {
       /* WARNING: executes asynchronously */
-      results[0].data.forEach(function(node) {
+      results[0].forEach(function(node) {
         var convertedNode = transformFbToHat(node, results[1], '');
         state.data.push(convertedNode);
       });
@@ -68,12 +81,11 @@ module.exports = (function() {
       });
   }
 
-  function initialize(node, hatAccessToken, graphAccessToken) {
+  function initialize(node, hatAccessToken, graphAccessToken, lastUpdated) {
     state.node = node || '';
     state.hatAccessToken = hatAccessToken || '';
     state.graphAccessToken = graphAccessToken || '';
-    state.updateLink = '';
-    state.lastUpdated = null;
+    state.lastUpdated = lastUpdated;
     state.data = [];
   };
 
@@ -192,6 +204,10 @@ module.exports = (function() {
       fbQuertGenerator.getQueryString('user');
     }
 
+    if (state.lastUpdated) {
+      requestUri += '&since'+state.lastUpdated;
+    }
+
     request({
       url: requestUri,
       method: 'GET',
@@ -199,16 +215,12 @@ module.exports = (function() {
     }, function (err, response, body) {
       if (err) return callback(err);
 
-      state.lastUpdated = Date.now();
-
-      if (body.paging.previous) {
-        state.updateLink = body.paging.previous;
-      }
+      state.lastUpdated = parseInt(Date.now() / 1000, 10).toString();
 
       if (state.node === 'profile') {
         return callback(null, [body]);
       } else {
-        return callback(null, body);
+        return callback(null, body.data);
       }
     });
   }

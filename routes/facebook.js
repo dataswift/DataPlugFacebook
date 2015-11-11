@@ -17,6 +17,7 @@ function getProviderAuthToken(req, res, next) {
 function updateDatabase(req, res, next) {
   var databaseUpdateKey = {};
   databaseUpdateKey['last_'+req.params.nodeName+'_update'] = req.session['last_'+req.params.nodeName+'_update'];
+  console.log(databaseUpdateKey);
   Accounts.findOneAndUpdate(
     { hat_token: req.query.hat_token },
     databaseUpdateKey,
