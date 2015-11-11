@@ -5,6 +5,7 @@ var _ = require('lodash');
 var config = require('../config');
 var fbFieldsConfig = require('../config/fbHatModels');
 var fbQuertGenerator = require('../config/fbFields');
+var Accounts = require('../models/accounts');
 
 module.exports = (function() {
   var publicObject = {};
@@ -25,18 +26,26 @@ module.exports = (function() {
     });
   }
 
-  publicObject.updateRun = function(node, hatAccessToken, graphAccessToken, lastUpdated) {
+  publicObject.updateRun = function(node, hatAccessToken, graphAccessToken, lastUpdated, done) {
     initialize(node, hatAccessToken, graphAccessToken, lastUpdated);
     async.waterfall([
       publicObject.fetchData,
       publicObject.postRecords
     ], function(err) {
-      if (err) return next(err);
+      if (err) return done(err);
 
-      req.session['last_'+node+'_update'] = state.lastUpdated;
+      console.log('update running');
 
-      return next();
+      var databaseUpdateKey = {};
+      databaseUpdateKey['last_'+node+'_update'] = state.lastUpdated;
 
+      Accounts.findOneAndUpdate(
+        { hat_token: hatAccessToken },
+        databaseUpdateKey,
+        function(err, account) {
+          if (err) return next(err);
+            done();
+        });
     });
   }
 

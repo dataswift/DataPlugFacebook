@@ -5,6 +5,7 @@ var Accounts = require('../models/accounts');
 var appConfig = require('../config');
 var fbToHat = require('../middleware/fbToHat');
 var fbConfig = require('../config/fbHatModels');
+var scheduler = require('../scheduler/agenda');
 
 function getProviderAuthToken(req, res, next) {
   Accounts.findOne({ hat_token: appConfig.hatAccessToken }, function(err, account) {
@@ -17,12 +18,12 @@ function getProviderAuthToken(req, res, next) {
 function updateDatabase(req, res, next) {
   var databaseUpdateKey = {};
   databaseUpdateKey['last_'+req.params.nodeName+'_update'] = req.session['last_'+req.params.nodeName+'_update'];
-  console.log(databaseUpdateKey);
   Accounts.findOneAndUpdate(
     { hat_token: req.query.hat_token },
     databaseUpdateKey,
     function(err, account) {
       if (err) return next(err);
+      scheduler.addJob(req.params.nodeName, req.query.hat_token);
       res.send("Cool, we're done.");
     });
 }
@@ -47,7 +48,7 @@ router.get('/', function(req, res, next) {
 router.get('/:nodeName/init', fbToHat.postDataSourceModel);
 
 router.get('/:nodeName/update', getProviderAuthToken, function(req, res, next) {
-  var state = fbToHat.initialRun(req.params.nodeName, req.query.hat_token, req.account.graph_access_token, req, next);
+  fbToHat.initialRun(req.params.nodeName, req.query.hat_token, req.account.graph_access_token, req, next);
 }, updateDatabase);
 
 module.exports = router;
