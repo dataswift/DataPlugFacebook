@@ -10,13 +10,14 @@ var updateShedule = {
 };
 
 module.exports.addJob = function(node, hatAccessToken) {
-  agenda.define('update facebook '+node, function(job, done) {
+  console.log(typeof node);
+  var taskName = 'update facebook ' + node + ' for ' + hatAccessToken;
+  agenda.define(taskName, function(job, done) {
     Accounts.findOne({ hat_token: hatAccessToken }, function(err, account) {
       fbToHat.updateRun(node, account.hat_token, account.graph_access_token, account['last_'+node+'_update'], done);
     });
   });
-
-  agenda.every(updateShedule.node, 'update facebook '+node);
+  agenda.every(updateShedule[node], taskName);
 };
 
 agenda.start();
