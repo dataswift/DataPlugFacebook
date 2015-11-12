@@ -4,9 +4,9 @@ var fbToHat = require('../middleware/fbToHat');
 var Accounts = require('../models/accounts');
 
 var updateShedule = {
-  posts: '2 minutes',
-  events: '3 minutes',
-  profile: '24 hours'
+  posts: '1 hour',
+  events: '1 day',
+  profile: '1 month'
 };
 
 module.exports.addJob = function(node, hatAccessToken) {

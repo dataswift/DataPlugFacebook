@@ -4,7 +4,7 @@ var async = require('async');
 var _ = require('lodash');
 var config = require('../config');
 var fbFieldsConfig = require('../config/fbHatModels');
-var fbQuertGenerator = require('../config/fbFields');
+var fbReqGen = require('../config/fbFields');
 var Accounts = require('../models/accounts');
 
 module.exports = (function() {
@@ -52,8 +52,8 @@ module.exports = (function() {
   publicObject.postDataSourceModel = function(req, res, next) {
     request({
       url: config.hatBaseUrl+'/data/table',
-      qs: { access_token: state.hatAccessToken },
-      headers: config.headers,
+      qs: { access_token: req.query.hat_token },
+      headers: config.hatHeaders,
       method: 'POST',
       json: true,
       body: fbFieldsConfig[req.params.nodeName]
@@ -65,13 +65,14 @@ module.exports = (function() {
 
   publicObject.fetchData = function(callback) {
     async.parallel([getGraphData, fetchHatInfo], function(err, results) {
+      if (err) return callback(err);
       /* WARNING: executes asynchronously */
       results[0].forEach(function(node) {
         var convertedNode = transformFbToHat(node, results[1], '');
         state.data.push(convertedNode);
       });
 
-      callback(null);
+      return callback(null);
     });
   };
 
@@ -142,6 +143,7 @@ module.exports = (function() {
         return callback(null, hatIdMapping);
       }
     ], function(err, hatIdMapping) {
+      if (err) return cb(err);
       return cb(null, hatIdMapping);
     });
   }
@@ -202,27 +204,14 @@ module.exports = (function() {
   }
 
   function getGraphData(callback) {
-    var requestUri = config.fbBaseUrl+'/me/';
-    if (state.node === 'events') {
-      requestUri += state.node+'?access_token='+state.graphAccessToken;
-    } else if (state.node === 'posts') {
-      requestUri += state.node+'?access_token='+state.graphAccessToken +
-      fbQuertGenerator.getQueryString('post');
-    } else if (state.node === 'profile') {
-      requestUri += '?access_token='+state.graphAccessToken +
-      fbQuertGenerator.getQueryString('user');
-    }
-
-    if (state.lastUpdated) {
-      requestUri += '&since'+state.lastUpdated;
-    }
-
     request({
-      url: requestUri,
+      url: fbReqGen.getRequestUrl(state.node, state.graphAccessToken, state.last),
       method: 'GET',
       json: true
     }, function (err, response, body) {
       if (err) return callback(err);
+
+      console.log(body);
 
       state.lastUpdated = parseInt(Date.now() / 1000, 10).toString();
 

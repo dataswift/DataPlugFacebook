@@ -1,5 +1,5 @@
 var facebookQueryFields_v_2_5 = {
-  post: {
+  posts: {
     available: ['id', 'admin_creator', 'application', 'call_to_action', 'caption',
      'created_time', 'description', 'feed_targeting', 'from', 'icon', 'is_hidden',
      'is_published', 'link', 'message', 'message_tags', 'name', 'object_id', 'picture',
@@ -9,7 +9,7 @@ var facebookQueryFields_v_2_5 = {
     used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
   },
 
-  user: {
+  profile: {
     available: ['id', 'about', 'age_range', 'bio', 'birthday', 'context', 'currency', 'devices',
     'education', 'email', 'favorite_athletes', 'favorite_teams', 'first_name', 'gender', 'hometown',
     'inspirational_people', 'install_type', 'installed', 'interested_in', 'is_shared_login',
@@ -25,8 +25,27 @@ var facebookQueryFields_v_2_5 = {
     'timezone', 'updated_time', 'verified', 'website']
   },
 
-  getQueryString: function(node) {
-    return '&fields=' + this[node]['used'].join(',');
+  events: {
+    available: ['id', 'category', 'cover', 'description', 'type', 'end_time', 'is_viewer_admin',
+    'is_page_owned', 'can_guests_invite', 'guest_list_enabled', 'name', 'owner', 'parent_group', 'place', 'start_time', 'ticket_uri', 'timezone', 'updated_time',
+    'attending_count', 'declined_count', 'maybe_count', 'noreply_count'],
+    used: ['id', 'name', 'description', 'start_time', 'end_time', 'rsvp_status', 'place']
+  },
+
+  getRequestUrl: function(node, graphAccessToken, lastUpdate) {
+    var graphRequestUrl = 'https://graph.facebook.com/me/';
+
+    if (node === 'events' || node === 'posts') {
+      graphRequestUrl += node;
+    }
+
+    graphRequestUrl += '?access_token='+graphAccessToken+'&fields='+this[node]['used'].join(',');
+
+    if (lastUpdate) {
+      graphRequestUrl += '&since='+lastUpdate;
+    }
+    console.log(graphRequestUrl);
+    return graphRequestUrl;
   }
 };
 
