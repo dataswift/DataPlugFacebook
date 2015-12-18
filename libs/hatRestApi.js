@@ -1,20 +1,24 @@
 'use strict';
 
-// Load modules
+/**
+ * Load modules
+ */
 
 var qs = require('qs');
 var request = require('request');
 var _ = require('lodash');
+var async = require('async');
 
-// Object to hold private variables and functions
+/**
+ * Define request configuration
+ */
 
 var internals = {};
 
-// Define configuration variables
-
-var requestDefaults = {
-  url: 'http://localhost:8080/data',
-  qs: { access_token: 'df4545665drgdfg' },
+internals.requestOptions = {
+  mainUrl: null,
+  url: null,
+  qs: { access_token: null },
   method: 'GET',
   headers: {
     "User-Agent": "MyClient/1.0.0",
@@ -25,18 +29,24 @@ var requestDefaults = {
   json: true
 };
 
+// Network methods
+/****************/
+
 exports.getDataSourceId = function (name, source, callback) {
 
-  var requestConfig = requestDefaults;
+  internals.requestOptions.url = internals.requestOptions.mainUrl + '/table';
+  internals.requestOptions.qs.name = name;
+  internals.requestOptions.qs.source = source;
 
-  requestConfig.url += '/table/search';
-  requestConfig.qs.name = name;
-  requestConfig.qs.source = source;
+  request(internals.requestOptions, function (err, response, body) {
 
-  request(requestConfig, function (err, response, body) {
-
-    var foundError = internals.handleErrors(err, response)
-    var dataSourceId = body.id;
+    internals.requestOptions.qs.name = null;
+    internals.requestOptions.qs.source = null;
+    var foundError = internals.handleErrors(err, response);
+    var dataSourceId;
+    if (body.id) {
+      dataSourceId = body.id;
+    }
 
     return callback(foundError, dataSourceId);
 
@@ -46,11 +56,9 @@ exports.getDataSourceId = function (name, source, callback) {
 
 exports.getDataSourceModel = function (dataSourceId, callback) {
 
-  var requestConfig = requestDefaults;
+  internals.requestOptions.url = internals.requestOptions.mainUrl + '/table/' + dataSourceId;
 
-  requestConfig.url += '/table/' + dataSourceId;
-
-  request(requestConfig, function (err, response, body) {
+  request(internals.requestOptions, function (err, response, body) {
 
     var foundError = internals.handleErrors(err, response)
 
@@ -62,44 +70,47 @@ exports.getDataSourceModel = function (dataSourceId, callback) {
 
 exports.createDataSourceModel = function (dataSourceModelConfig, callback) {
 
-  var requestConfig = requestDefaults;
+  internals.requestOptions.url = internals.requestOptions.mainUrl + '/table';
+  internals.requestOptions.method = 'POST';
+  internals.requestOptions.body = dataSourceModelConfig;
 
-  requestConfig.url += '/table';
-  requestConfig.method = 'POST';
-  requestConfig.body = dataSourceModelConfig;
+  request(internals.requestOptions, function (err, response, body) {
 
-  request(requestConfig, function (err, response, body) {
+    internals.requestOptions.method = 'GET';
+    internals.requestOptions.body = null;
+    var foundError = internals.handleErrors(err, response);
 
+    return callback(foundError, body);
+
+  });
+};
+
+exports.createRecords = function (record, callback) {
+
+  internals.requestOptions.url = internals.requestOptions.mainUrl + '/record/values';
+  internals.requestOptions.method = 'POST';
+  internals.requestOptions.json = false;
+  internals.requestOptions.body = internals.normalizeJsonValueTypes(record);
+
+  request(internals.requestOptions, function (err, response, body) {
+
+    internals.requestOptions.method = 'GET';
+    internals.requestOptions.json = true;
+    internals.requestOptions.body = null;
     var foundError = internals.handleErrors(err, response);
 
     return callback(foundError);
 
   });
-};
-
-exports.createRecord = function (record, callback) {
-
-  var requestConfig = requestDefaults;
-
-  requestConfig.url += '/record/values';
-  requestConfig.method = 'POST';
-  requestConfig.json = false;
-  requestConfig.body = internals.normalizeJsonValueTypes(record);
-
-  request(requestConfig, function (err, response, body) {
-
-    var foundError = internals.handleErrors(err, response);
-
-    return callback(foundError);
-
-  });
 
 };
+
+// Data transformation methods
+/****************************/
 
 exports.mapDataSourceModelIds = function (table) {
 
   var hatIdMappingArray = internals.mapDataSourceModelIds(table, '');
-
   var hatIdMappingObject = _.zipObject(hatIdMappingArray);
 
   return hatIdMappingObject;
@@ -111,7 +122,7 @@ internals.mapDataSourceModelIds = function (table, prefix) {
     return [prefix + '_' + field.name, field.id];
   });
 
-  if (table.subTables.length > 0) {
+  if (table.subTables && table.subTables.length > 0) {
 
     var subTableMapping = _.map(table.subTables, function(subTable) {
       return internals.mapDataSourceModelIds(subTable, subTable.name);
@@ -123,7 +134,37 @@ internals.mapDataSourceModelIds = function (table, prefix) {
   return tableMapping.concat(flattenedSubTableMapping);
 };
 
-exports.transformObjectToHat = function (node, hatIdMapping, prefix) {
+exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
+
+  if (typeof inputObj === 'array') {
+
+    return _.map(inputObj, function (node) {
+
+      var values = hat.generateHatValues(node, hatIdMapping, '');
+
+      return {
+        record: { name: name + Date.now() },
+        values: values
+      };
+
+    });
+
+  } else if (typeof inputObj === 'object') {
+
+    var values = internals.generateHatValues(inputObj, hatIdMapping, '');
+
+    return {
+      record: { name: name + Date.now() },
+      values: values
+    };
+
+  }
+
+  return null;
+
+};
+
+internals.generateHatValues = function (node, hatIdMapping, prefix) {
 
   var convertedData = _.map(node, function (value, key) {
 
@@ -152,8 +193,12 @@ exports.transformObjectToHat = function (node, hatIdMapping, prefix) {
 
 };
 
-internals.handleErrors = function (err, response) {
+// Helper methods
+/***************/
 
+internals.handleErrors = function (err, response) {
+  console.log("handle errors");
+  console.log(err);
   if (err) return err;
 
   switch (response.statusCode) {
@@ -180,3 +225,71 @@ internals.jsonTypeRules = function (key, value) {
 internals.normalizeJsonValueTypes = function (obj) {
   return JSON.stringify(obj, internals.jsonTypeRules);
 };
+
+// Accessor methods
+/*****************/
+
+/**
+ * Sets all request options
+ * Maps directly to 'request' module configuration object
+ * @param {Object} options
+ */
+
+exports.setOptions = function (options) {
+  if (typeof options === 'object') internals.requestOptions = options;
+
+  return this;
+};
+
+/**
+ * Gets all request options
+ * @returns the request options object
+ */
+
+exports.getOptions = function () {
+  return internals.requestOptions;
+};
+
+/**
+ * Sets the access token
+ * @param {string} token
+ */
+
+exports.setAccessToken = function (token) {
+  internals.requestOptions.qs.access_token = token;
+
+  return this;
+};
+
+/**
+ * Gets the access token
+ * @returns the access token
+ */
+
+exports.getAccessToken = function () {
+  return internals.requestOptions.qs.access_token;
+};
+
+/**
+ * Sets HAT base URL
+ * @param {string} url
+ */
+
+exports.setUrl = function (url) {
+  // TODO: validate url format
+  internals.requestOptions.mainUrl = url + '/data';
+
+  return this;
+};
+
+/**
+ * Gets HAT base URL
+ * @returns the HAT base URL
+ */
+
+exports.getUrl = function() {
+  return internals.requestOptions.url;
+};
+
+
+

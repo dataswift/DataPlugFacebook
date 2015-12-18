@@ -1,13 +1,6 @@
 var configVars = {
-  hatBaseUrl: 'http://localhost:8080',
-  appBaseUrl: 'http://localhost:3000',
-  hatAccessToken: 'df4545665drgdfg',
-  hatHeaders: {
-    "User-Agent": "MyClient/1.0.0",
-    "Accept": "application/json",
-    "Host": "example.hatdex.org",
-    "Content-Type": "application/json"
-  }
+  appBaseUrl: 'http://madeupdomain.io:3000',
+  fbAccessScope: 'public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
 };
 
 module.exports = configVars;
