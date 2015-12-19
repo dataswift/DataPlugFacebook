@@ -8,7 +8,7 @@ if (process.env.MONGOLAB_URI) {
 }
 
 var agenda = new Agenda({ db: { address: mongourl }});
-var fbReqGen = require('../config/fbFields');
+var fbReqGen = require('./config/fbFields');
 var hat = require('./hatRestApi');
 var models = require('./models');
 

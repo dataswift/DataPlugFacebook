@@ -2,9 +2,19 @@ extends layout
 
 block content
   h1= title
+  p Welcome
   p= stepInformation
-
-  a(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Sync with Facebook
+  form(action=hatPostLink, method="post")
+    div
+      label HAT Access Token
+      br
+      input(type="text", name="hatAccessToken")
+    div
+      label HAT URL
+      br
+      input(type="text", name="hatUrl")
+    br
+    input(type="submit", value="Register/Log In")
   br
   hr
 

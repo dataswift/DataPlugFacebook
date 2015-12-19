@@ -6,33 +6,25 @@ var services = require('./services');
 var fbConfig = require('./config/fbHatModels');
 var appConfig = require('./config');
 
-router.get('/', function (req, res, next) {
-  res.render('index', {
-    title: 'Welcome to HAT sync service HATTAR',
-    stepInformation: 'Step 1 - Providing HAT details',
-    hatPostLink: appConfig.appBaseUrl + '/hat' });
-});
-
-router.post('/hat', function (req, res, next) {
+router.get('/facebook', function (req, res, next) {
 
   // TODO: implement method to validate access token for given url
-  if (req.body.hatAccessToken && req.body.hatUrl) {
+  if (req.query.hatAccessToken && req.query.hatUrl) {
 
-    var query = { hatToken: req.body.hatAccessToken, hatBaseUrl: req.body.hatUrl };
+    var query = { hatToken: req.query.hatAccessToken, hatBaseUrl: req.query.hatUrl };
 
     models.Accounts.findOneAndUpdate(query, {}, { new: true, upsert: true },
       function(err, account) {
         if (err) return res.render('error', { message: err });
 
-
         req.session.hatAccessToken = account.hatToken;
         req.session.hatUrl = account.hatBaseUrl;
         req.session.accountId = account._id;
-        res.render('authorisation', {
-          title: 'HAT sync service HATTAR',
-          stepInformation: 'Step 2 - Authorise HATTER to access your Facebook data',
+        res.render('index', {
+          title: 'Welcome to HAT Facebook Data Plug',
+          stepInformation: 'Step 1 - Authorise us to access your private Facebook data',
           facebookAppId: process.env.FB_APP_ID,
-          redirectUri: appConfig.appBaseUrl + '/facebook',
+          redirectUri: appConfig.appBaseUrl + '/facebook/authenticate',
           fbAccessScope: appConfig.fbAccessScope });
 
     });
@@ -43,11 +35,11 @@ router.post('/hat', function (req, res, next) {
 
 });
 
-router.get('/facebook', function (req, res, next) {
+router.get('/facebook/authenticate', function (req, res, next) {
   if (req.query.code) {
 
     var tokenRequestUrl = 'https://graph.facebook.com/v2.5/oauth/access_token?client_id=' +
-      process.env.FB_APP_ID + '&redirect_uri=' + appConfig.appBaseUrl + '/facebook&client_secret=' +
+      process.env.FB_APP_ID + '&redirect_uri=' + appConfig.appBaseUrl + '/facebook/authenticate&client_secret=' +
       process.env.FB_APP_SECRET + '&code=' + req.query.code;
 
     request.get(tokenRequestUrl, function (err, response, body) {
@@ -58,15 +50,15 @@ router.get('/facebook', function (req, res, next) {
 
         // Workaround for a bug in a session module
         req.session.save(function (err) {
-          res.redirect('/facebook');
+          res.redirect('/facebook/authenticate');
         });
 
     });
 
   } else if (true) {
     res.render('services', {
-    title: 'HAT sync service HATTAR',
-    stepInformation: 'Step 3 - Schedule record synchronisation',
+    title: 'HAT Facebook Data Plug',
+    stepInformation: 'Step 2 - Schedule record synchronisation',
     hatServicesLink: appConfig.appBaseUrl + '/services' });
   } else {
     res.send('Authentication with facebook failed. Please start again.');
@@ -109,7 +101,7 @@ router.post('/services', function (req, res, next) {
               services.addUpdateJob(dataSource, 'facebook', req.session.hatAccessToken, '2 minutes');
 
               if (completed >= numberOfDataSources) {
-                res.send('Woopidy doo! Done');
+                res.send('Congratulations! ' + dataSources + ' are now being automatically synchronized with your HAT.');
               }
           });
         });
