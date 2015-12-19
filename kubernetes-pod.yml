@@ -1,0 +1,18 @@
+#http://kubernetes.io/v1.1/docs/user-guide/connecting-applications.html
+apiVersion: v1
+kind: Pod
+metadata:
+  name: facebook-dataplug
+  labels:
+    app: facebook-dataplug
+spec:
+  containers: 
+  - name: fbmongo #------------------------------------------------------------------------
+    image: mongo:latest
+  - name: facebook-dataplug #------------------------------------------------------------------------
+    image: hubofallthings/facebook-dataplug:latest
+    ports:
+    - containerPort: 3000 #not exposed in node nor are there any special NAT rules to route traffic to the pod
+    env:
+    - name: MONGOLAB_URI
+      value: "mongodb://fbmongo:27017/hat"
