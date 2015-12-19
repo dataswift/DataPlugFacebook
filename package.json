@@ -1,7 +1,7 @@
 {
-  "name": "HATsync",
-  "version": "0.0.0",
-  "private": true,
+  "name": "Facebook HAT Data Plug",
+  "version": "0.0.2",
+  "private": false,
   "scripts": {
     "start": "node ./bin/www"
   },
@@ -9,7 +9,6 @@
     "agenda": "^0.7.2",
     "async": "^1.5.0",
     "body-parser": "~1.13.2",
-    "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "express-session": "^1.12.1",

@@ -2,9 +2,9 @@ var Agenda = require('agenda');
 var request = require('request');
 var async = require('async');
 var agenda = new Agenda({ db: { address: 'mongodb://localhost:27017/hat' }});
-var fbReqGen = require('../config/fbFields');
+var fbReqGen = require('./config/fbFields');
 var hat = require('./hatRestApi');
-var models = require('../models/accounts');
+var models = require('./models');
 
 var internals = {};
 
@@ -15,8 +15,6 @@ exports.addUpdateJob = function (name, source, hatAccessToken, frequency) {
   agenda.define(jobName, function (job, done) {
 
   var data = job.attrs.data;
-
-  console.log(data);
 
   models.Accounts.find({ hatToken: data.hatAccessToken })
     .populate({ path: 'dataSources', match: { name: data.name, source: data.source } })
@@ -94,8 +92,6 @@ internals.getGraphNode = function (node, accessToken, lastUpdated, callback) {
 
   request(requestOptions, function (err, response, body) {
     if (err) return callback(err);
-
-    console.log(body);
 
     var newLastUpdated = parseInt(Date.now() / 1000, 10).toString();
 
