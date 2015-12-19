@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-var models = require('../models/accounts');
-var services = require('../libs/services');
-var config = require('../config/fbHatModels');
-var appConfig = require('../config');
+var models = require('./models');
+var services = require('./services');
+var fbConfig = require('./config/fbHatModels');
+var appConfig = require('./config');
 
 router.get('/', function (req, res, next) {
   res.render('index', {
@@ -83,15 +83,13 @@ router.post('/services', function (req, res, next) {
   var completed = 0;
 
   dataSources.forEach(function (dataSource) {
-    services.findModelOrCreate(dataSource, 'facebook', req.session.hatUrl, req.session.hatAccessToken, config[dataSource], function (err, hatIdMapping) {
-
-      console.log(hatIdMapping);
+    services.findModelOrCreate(dataSource, 'facebook', req.session.hatUrl, req.session.hatAccessToken, fbConfig[dataSource], function (err, hatIdMapping) {
 
       var hatDataSource = {
         name: dataSource,
         source: 'facebook',
         sourceAccessToken: req.session.fbAccessToken,
-        dataSourceModel: config[dataSource],
+        dataSourceModel: fbConfig[dataSource],
         hatIdMapping: hatIdMapping,
         lastUpdated: null
       };
