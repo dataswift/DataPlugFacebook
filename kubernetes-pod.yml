@@ -9,10 +9,12 @@ spec:
   containers: 
   - name: fbmongo #------------------------------------------------------------------------
     image: mongo:latest
+    ports:
+    - containerPort: 27017
   - name: facebook-dataplug #------------------------------------------------------------------------
     image: hubofallthings/facebook-dataplug:latest
     ports:
     - containerPort: 3000 #not exposed in node nor are there any special NAT rules to route traffic to the pod
     env:
     - name: MONGOLAB_URI
-      value: "mongodb://fbmongo:27017/hat"
+      value: "mongodb://localhost:27017/hat"
