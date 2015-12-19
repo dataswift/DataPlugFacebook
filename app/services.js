@@ -1,8 +1,14 @@
 var Agenda = require('agenda');
 var request = require('request');
 var async = require('async');
-var agenda = new Agenda({ db: { address: 'mongodb://localhost:27017/hat' }});
-var fbReqGen = require('./config/fbFields');
+var mongourl = "mongodb://localhost:27017/hat"
+
+if (process.env.MONGOLAB_URI) {
+  mongourl = process.env.MONGOLAB_URI;
+}
+
+var agenda = new Agenda({ db: { address: mongourl }});
+var fbReqGen = require('../config/fbFields');
 var hat = require('./hatRestApi');
 var models = require('./models');
 
