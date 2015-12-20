@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 var errors = require('./errors');
+var config = require('./config');
 var routes = require('./routes');
 
 var app = express();
@@ -28,14 +29,10 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-// app.use('/facebook', facebook);
 
 // mongoose
-if (process.env.MONGOLAB_URI) {
-  mongoose.connect(process.env.MONGOLAB_URI);
-} else {
-  mongoose.connect('mongodb://localhost:27017/hat');
-}
+
+mongoose.connect(config.dbURL);
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);
