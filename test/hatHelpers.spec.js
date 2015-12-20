@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var hat = require('../libs/hatRestApi');
+var hat = require('../app/hatRestApi');
 
 describe('HAT Transformer', function() {
 
@@ -8,14 +8,19 @@ describe('HAT Transformer', function() {
     expect(testIdMapping).to.eql(hatIdMapping);
   });
 
-  it('convert simple objects to HAT data structures', function() {
-    var transformedData = hat.transformObjectToHat(sampleData, hatIdMapping, '');
+  it('converts simple objects to HAT data structures', function() {
+    var transformedData = hat.transformObjectToHat('givenString', sampleData, hatIdMapping);
     expect(transformedData).to.deep.equal(sampleHatRecord);
   });
 
-  it('convert nested objects to HAT data structures', function() {
-    var transformedData = hat.transformObjectToHat(sampleFacebookData, hatIdMapping, '');
+  it('converts nested objects to HAT data structures', function() {
+    var transformedData = hat.transformObjectToHat('givenString', sampleFacebookData, hatIdMapping);
     expect(transformedData).to.deep.equal(hatRecord);
+  });
+
+  it('converts arrays of objects to HAT data structure', function() {
+    var transformedData = hat.transformObjectToHat('givenString', sampleDataArray, hatIdMapping);
+    expect(transformedData).to.deep.equal(hatRecordArray);
   });
 
 });
@@ -60,12 +65,17 @@ var sampleData = {
   "description": "Data from my kitchen"
 };
 
-var sampleHatRecord = [{
-  "value": "Kitchen data",
-  "field": { "name": "name", "id": 2 }
-}, {
-  "value": "Data from my kitchen",
-  "field": { "name": "description", "id": 1 }
+var sampleHatRecord =
+[{
+  "record": { "name": "givenString" },
+  "values" :
+  [{
+    "value": "Kitchen data",
+    "field": { "name": "name", "id": 2 }
+    }, {
+    "value": "Data from my kitchen",
+    "field": { "name": "description", "id": 1 }
+  }]
 }];
 
 
@@ -85,38 +95,45 @@ var sampleFacebookData = {
 };
 
 var hatIdMapping = {
-  "_description": 1,
-  "_name": 2,
+  "description": 1,
+  "name": 2,
   "place_name": 3,
-  "location_city": 4,
-  "location_country": 5,
-  "location_latitude": 6,
-  "location_longitude": 7,
-  "_rsvp_status": 8
+  "place_location_city": 4,
+  "place_location_country": 5,
+  "place_location_latitude": 6,
+  "place_location_longitude": 7,
+  "rsvp_status": 8
 };
 
 var hatRecord = [{
-  "value": "Best event in my life!",
-  "field": { "name": "description", "id": 1 }
-}, {
-  "value": "Christmas dinner",
-  "field": { "name": "name", "id": 2 }
-}, {
-  "value": "Cosy restaurant in London center",
-  "field": { "name": "name", "id": 3 }
-}, {
-  "value": "London",
-  "field": { "name": "city", "id": 4 }
-}, {
-  "value": "United Kingdom",
-  "field": { "name": "country", "id": 5 }
-}, {
-  "value": 51.507222,
-  "field": { "name": "latitude", "id": 6 }
-}, {
-  "value": -0.1275,
-  "field": { "name": "longitude", "id": 7 }
-}, {
-  "value": "attending",
-  "field": { "name": "rsvp_status", "id": 8 }
+  "record": { "name": 'givenString' },
+  "values":
+  [{
+    "value": "Best event in my life!",
+    "field": { "name": "description", "id": 1 }
+  }, {
+    "value": "Christmas dinner",
+    "field": { "name": "name", "id": 2 }
+  }, {
+    "value": "Cosy restaurant in London center",
+    "field": { "name": "name", "id": 3 }
+  }, {
+    "value": "London",
+    "field": { "name": "city", "id": 4 }
+  }, {
+    "value": "United Kingdom",
+    "field": { "name": "country", "id": 5 }
+  }, {
+    "value": 51.507222,
+    "field": { "name": "latitude", "id": 6 }
+  }, {
+    "value": -0.1275,
+    "field": { "name": "longitude", "id": 7 }
+  }, {
+    "value": "attending",
+    "field": { "name": "rsvp_status", "id": 8 }
+  }]
 }];
+
+var sampleDataArray = [sampleData, sampleFacebookData];
+var hatRecordArray = [sampleHatRecord[0], hatRecord[0]];

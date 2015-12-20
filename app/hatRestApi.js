@@ -99,6 +99,8 @@ exports.createRecords = function (record, callback) {
     internals.requestOptions.body = null;
     var foundError = internals.handleErrors(err, response);
 
+    console.log('Posted to HAT: ', JSON.parse(body));
+
     return callback(foundError);
 
   });
@@ -117,15 +119,17 @@ exports.mapDataSourceModelIds = function (table) {
 };
 
 internals.mapDataSourceModelIds = function (table, prefix) {
+  if (prefix !== '')
+    prefix = prefix + '_';
 
   var tableMapping = _.map(table.fields, function(field) {
-    return [prefix + '_' + field.name, field.id];
+    return [prefix + field.name, field.id];
   });
 
   if (table.subTables && table.subTables.length > 0) {
 
     var subTableMapping = _.map(table.subTables, function(subTable) {
-      return internals.mapDataSourceModelIds(subTable, subTable.name);
+      return internals.mapDataSourceModelIds(subTable, prefix+subTable.name);
     });
 
     var flattenedSubTableMapping = _.flatten(subTableMapping);
@@ -136,27 +140,27 @@ internals.mapDataSourceModelIds = function (table, prefix) {
 
 exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
-  if (typeof inputObj === 'array') {
+  if (_.isArray(inputObj)) {
 
     return _.map(inputObj, function (node) {
 
-      var values = hat.generateHatValues(node, hatIdMapping, '');
+      var values = internals.generateHatValues(node, hatIdMapping, '');
 
       return {
-        record: { name: name + Date.now() },
+        record: { name: name },
         values: values
       };
 
     });
 
-  } else if (typeof inputObj === 'object') {
+  } else if (_.isObject(inputObj)) {
 
     var values = internals.generateHatValues(inputObj, hatIdMapping, '');
 
-    return {
-      record: { name: name + Date.now() },
+    return [{
+      record: { name: name },
       values: values
-    };
+    }];
 
   }
 
@@ -166,18 +170,27 @@ exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
 internals.generateHatValues = function (node, hatIdMapping, prefix) {
 
+  if (prefix !== '')
+    prefix = prefix + '_'
+
   var convertedData = _.map(node, function (value, key) {
 
     if (typeof value === 'object') {
-
-      return exports.transformObjectToHat(value, hatIdMapping, key);
+      // Use lodash to check for arrays
+      // if (typeof value === 'array') {
+      //   return _.map(value, function(valueItem) {
+      //     internals.generateHatValues(valueItem, hatIdMapping, prefix+key)
+      //   })
+      // }
+      // FIXME: next prefix should be prefix_key
+      return internals.generateHatValues(value, hatIdMapping, prefix+key);
 
     } else {
 
       var newHatValue = {
         value: value,
         field: {
-          id: hatIdMapping[prefix+'_'+key],
+          id: hatIdMapping[prefix+key],
           name: key
         }
       };
@@ -197,8 +210,7 @@ internals.generateHatValues = function (node, hatIdMapping, prefix) {
 /***************/
 
 internals.handleErrors = function (err, response) {
-  console.log("handle errors");
-  console.log(err);
+
   if (err) return err;
 
   switch (response.statusCode) {

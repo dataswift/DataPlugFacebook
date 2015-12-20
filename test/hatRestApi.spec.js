@@ -20,7 +20,7 @@ describe('HAT API library', function() {
     // replace the 'request' module with stub object
     mockery.registerMock('request', hatRequestStub);
 
-    hat = require('../libs/hatRestApi');
+    hat = require('../app/hatRestApi');
 
   });
 
