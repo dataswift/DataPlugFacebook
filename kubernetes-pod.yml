@@ -9,10 +9,34 @@ spec:
   containers: 
   - name: fbmongo #------------------------------------------------------------------------
     image: mongo:latest
+    resources:
+      requests:
+        cpu: "20m"
+      limits:
+        cpu: "100m"
+    ports:
+    - containerPort: 30080
   - name: facebook-dataplug #------------------------------------------------------------------------
     image: hubofallthings/facebook-dataplug:latest
+    resources:
+      requests:
+        cpu: "20m"
+      limits:
+        cpu: "100m"
     ports:
     - containerPort: 3000 #not exposed in node nor are there any special NAT rules to route traffic to the pod
     env:
-    - name: MONGOLAB_URI
-      value: "mongodb://fbmongo:27017/hat"
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: "30080"
+    - name: HOST
+      value: facebook.source.hubofallthings.net
+    - name: MONGODB_PORT
+      value: "27017"
+    - name: MONGODB_HOST
+      value: localhost
+    - name: FB_APP_ID
+      value: "158753364485419"
+    - name: FB_APP_SECRET
+      value: "677ae8f9282ac131c071c332c1d7e70a"

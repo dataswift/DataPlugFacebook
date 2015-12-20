@@ -10,8 +10,9 @@ spec:
   selector:
     app: facebook-dataplug
   ports:
-  - targetPort: 3000 #port on pod #nodePort: %port%
-    nodePort: 10080
+  - targetPort: 30080 #port on pod #nodePort: %port%
+    port: 30080
+    nodePort: 30080
     protocol: TCP
     name: http
   type: NodePort #this makes the ports accessible on the node
