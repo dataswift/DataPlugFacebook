@@ -90,14 +90,14 @@ var sampleFacebookData = {
 };
 
 var hatIdMapping = {
-  "_description": 1,
-  "_name": 2,
+  "description": 1,
+  "name": 2,
   "place_name": 3,
-  "location_city": 4,
-  "location_country": 5,
-  "location_latitude": 6,
-  "location_longitude": 7,
-  "_rsvp_status": 8
+  "place_location_city": 4,
+  "place_location_country": 5,
+  "place_location_latitude": 6,
+  "place_location_longitude": 7,
+  "rsvp_status": 8
 };
 
 var hatRecord = [{

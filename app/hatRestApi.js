@@ -122,15 +122,17 @@ exports.mapDataSourceModelIds = function (table) {
 };
 
 internals.mapDataSourceModelIds = function (table, prefix) {
+  if (prefix !== '')
+    prefix = prefix + '_';
 
   var tableMapping = _.map(table.fields, function(field) {
-    return [prefix + '_' + field.name, field.id];
+    return [prefix + field.name, field.id];
   });
 
   if (table.subTables && table.subTables.length > 0) {
 
     var subTableMapping = _.map(table.subTables, function(subTable) {
-      return internals.mapDataSourceModelIds(subTable, subTable.name);
+      return internals.mapDataSourceModelIds(subTable, prefix+subTable.name);
     });
 
     var flattenedSubTableMapping = _.flatten(subTableMapping);
@@ -171,23 +173,26 @@ exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
 internals.generateHatValues = function (node, hatIdMapping, prefix) {
 
+  if (prefix !== '')
+    prefix = prefix + '_'
+
   var convertedData = _.map(node, function (value, key) {
 
     if (typeof value === 'object') {
       if (typeof value === 'array') {
         return _.map(value, function(valueItem) {
-          internals.generateHatValues(valueItem, hatIdMapping, prefix+'_'+key)
+          internals.generateHatValues(valueItem, hatIdMapping, prefix+key)
         })
       }
       // FIXME: next prefix should be prefix_key
-      return internals.generateHatValues(value, hatIdMapping, key);
+      return internals.generateHatValues(value, hatIdMapping, prefix+key);
 
     } else {
 
       var newHatValue = {
         value: value,
         field: {
-          id: hatIdMapping[prefix+'_'+key],
+          id: hatIdMapping[prefix+key],
           name: key
         }
       };
