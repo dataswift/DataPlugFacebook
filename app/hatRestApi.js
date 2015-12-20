@@ -85,11 +85,12 @@ exports.createDataSourceModel = function (dataSourceModelConfig, callback) {
   });
 };
 
-exports.createRecords = function (record, callback) {
+exports.createRecords = function (record, hatAccessToken, callback) {
 
   internals.requestOptions.url = internals.requestOptions.mainUrl + '/record/values';
   internals.requestOptions.method = 'POST';
   internals.requestOptions.json = false;
+  internals.requestOptions.qs.access_token = hatAccessToken;
   internals.requestOptions.body = internals.normalizeJsonValueTypes(record);
 
   request(internals.requestOptions, function (err, response, body) {

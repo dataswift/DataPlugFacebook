@@ -34,7 +34,8 @@ exports.addUpdateJob = function (name, source, hatAccessToken, frequency) {
 
         var hatRecord = hat.transformObjectToHat(data.name, fbData, sourceData.hatIdMapping);
 
-        hat.createRecords(hatRecord, function (err) {
+        console.log(accounts);
+        hat.createRecords(hatRecord, data.hatAccessToken, function (err) {
           if (err) return;
 
           sourceData.lastUpdated = lastUpdated;
