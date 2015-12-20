@@ -99,7 +99,6 @@ exports.createRecords = function (record, callback) {
     internals.requestOptions.body = null;
     var foundError = internals.handleErrors(err, response);
 
-    console.log('#' * 100);
     console.log('Posted to HAT: ', JSON.parse(body));
 
     return callback(foundError);

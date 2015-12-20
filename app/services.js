@@ -5,6 +5,7 @@ var fbReqGen = require('./config/fbFields');
 var hat = require('./hatRestApi');
 var models = require('./models');
 var config = require('./config');
+var _ = require('lodash');
 
 var Agenda = require('agenda');
 var agenda = new Agenda({ db: { address: config.dbURL } });
@@ -26,6 +27,10 @@ exports.addUpdateJob = function (name, source, hatAccessToken, frequency) {
       var sourceData = accounts[0].dataSources[0];
 
       internals.getGraphNode(sourceData.name, sourceData.sourceAccessToken, sourceData.lastUpdated, function (err, fbData, lastUpdated) {
+
+        if (_.isArray(fbData) && fbData.length === 0) {
+          return done();
+        }
 
         var hatRecord = hat.transformObjectToHat(data.name, fbData, sourceData.hatIdMapping);
 
