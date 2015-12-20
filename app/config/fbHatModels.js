@@ -119,18 +119,6 @@ var hatDataSourceConfig = {
           { name: "name" }
         ]
       }, {
-        name: "security_settings",
-        source: "facebook",
-        subTables: [
-          {
-            name: "secure_browsing",
-            source: "facebook",
-            fields: [
-              { name: "enabled" }
-            ]
-          }
-        ]
-      }, {
         name: "significant_other",
         source: "facebook",
         fields: [

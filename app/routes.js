@@ -83,7 +83,7 @@ router.post('/services', function (req, res, next) {
         sourceAccessToken: req.session.fbAccessToken,
         dataSourceModel: fbConfig[dataSource],
         hatIdMapping: hatIdMapping,
-        lastUpdated: null
+        lastUpdated: '1'
       };
 
       var dbEntry = new models.HatDataSource(hatDataSource);

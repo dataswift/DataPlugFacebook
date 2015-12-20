@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var hat = require('../libs/hatRestApi');
+var hat = require('../app/hatRestApi');
 
 describe('HAT Transformer', function() {
 
@@ -9,12 +9,12 @@ describe('HAT Transformer', function() {
   });
 
   it('convert simple objects to HAT data structures', function() {
-    var transformedData = hat.transformObjectToHat(sampleData, hatIdMapping, '');
+    var transformedData = hat.transformObjectToHat('givenString', sampleData, hatIdMapping);
     expect(transformedData).to.deep.equal(sampleHatRecord);
   });
 
   it('convert nested objects to HAT data structures', function() {
-    var transformedData = hat.transformObjectToHat(sampleFacebookData, hatIdMapping, '');
+    var transformedData = hat.transformObjectToHat('givenString', sampleFacebookData, hatIdMapping);
     expect(transformedData).to.deep.equal(hatRecord);
   });
 
@@ -60,12 +60,17 @@ var sampleData = {
   "description": "Data from my kitchen"
 };
 
-var sampleHatRecord = [{
-  "value": "Kitchen data",
-  "field": { "name": "name", "id": 2 }
-}, {
-  "value": "Data from my kitchen",
-  "field": { "name": "description", "id": 1 }
+var sampleHatRecord =
+[{
+  "record": { "name": "givenString" },
+  "values" :
+  [{
+    "value": "Kitchen data",
+    "field": { "name": "name", "id": 2 }
+    }, {
+    "value": "Data from my kitchen",
+    "field": { "name": "description", "id": 1 }
+  }]
 }];
 
 
@@ -96,27 +101,31 @@ var hatIdMapping = {
 };
 
 var hatRecord = [{
-  "value": "Best event in my life!",
-  "field": { "name": "description", "id": 1 }
-}, {
-  "value": "Christmas dinner",
-  "field": { "name": "name", "id": 2 }
-}, {
-  "value": "Cosy restaurant in London center",
-  "field": { "name": "name", "id": 3 }
-}, {
-  "value": "London",
-  "field": { "name": "city", "id": 4 }
-}, {
-  "value": "United Kingdom",
-  "field": { "name": "country", "id": 5 }
-}, {
-  "value": 51.507222,
-  "field": { "name": "latitude", "id": 6 }
-}, {
-  "value": -0.1275,
-  "field": { "name": "longitude", "id": 7 }
-}, {
-  "value": "attending",
-  "field": { "name": "rsvp_status", "id": 8 }
+  "record": { "name": 'givenString' },
+  "values":
+  [{
+    "value": "Best event in my life!",
+    "field": { "name": "description", "id": 1 }
+  }, {
+    "value": "Christmas dinner",
+    "field": { "name": "name", "id": 2 }
+  }, {
+    "value": "Cosy restaurant in London center",
+    "field": { "name": "name", "id": 3 }
+  }, {
+    "value": "London",
+    "field": { "name": "city", "id": 4 }
+  }, {
+    "value": "United Kingdom",
+    "field": { "name": "country", "id": 5 }
+  }, {
+    "value": 51.507222,
+    "field": { "name": "latitude", "id": 6 }
+  }, {
+    "value": -0.1275,
+    "field": { "name": "longitude", "id": 7 }
+  }, {
+    "value": "attending",
+    "field": { "name": "rsvp_status", "id": 8 }
+  }]
 }];

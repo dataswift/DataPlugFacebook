@@ -92,12 +92,17 @@ exports.createRecords = function (record, callback) {
   internals.requestOptions.json = false;
   internals.requestOptions.body = internals.normalizeJsonValueTypes(record);
 
+  console.log(internals.requestOptions);
+
   request(internals.requestOptions, function (err, response, body) {
 
     internals.requestOptions.method = 'GET';
     internals.requestOptions.json = true;
     internals.requestOptions.body = null;
     var foundError = internals.handleErrors(err, response);
+
+    console.log('#' * 100);
+    console.log('Posted to HAT: ', JSON.parse(body));
 
     return callback(foundError);
 
@@ -143,7 +148,7 @@ exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
       var values = hat.generateHatValues(node, hatIdMapping, '');
 
       return {
-        record: { name: name + Date.now() },
+        record: { name: name },
         values: values
       };
 
@@ -153,10 +158,10 @@ exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
     var values = internals.generateHatValues(inputObj, hatIdMapping, '');
 
-    return {
-      record: { name: name + Date.now() },
+    return [{
+      record: { name: name },
       values: values
-    };
+    }];
 
   }
 
