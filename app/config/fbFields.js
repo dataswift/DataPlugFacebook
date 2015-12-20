@@ -44,7 +44,7 @@ var facebookQueryFields_v_2_5 = {
     if (lastUpdate) {
       graphRequestUrl += '&since='+lastUpdate;
     }
-    console.log(graphRequestUrl);
+
     return graphRequestUrl;
   }
 };

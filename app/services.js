@@ -24,7 +24,7 @@ exports.addUpdateJob = function (name, source, hatAccessToken, frequency) {
     .exec(function (err, accounts) {
 
       var sourceData = accounts[0].dataSources[0];
-      console.log(sourceData);
+
       internals.getGraphNode(sourceData.name, sourceData.sourceAccessToken, sourceData.lastUpdated, function (err, fbData, lastUpdated) {
 
         var hatRecord = hat.transformObjectToHat(data.name, fbData, sourceData.hatIdMapping);
@@ -66,7 +66,7 @@ exports.findModelOrCreate = function (name, source, url, accessToken, dataSource
   async.waterfall(procedure, function (err, result) {
 
     if (err) {
-      console.log('we reached the end of waterfall');
+
       return hat.createDataSourceModel(dataSourceModelConfig, function (error, body) {
         // TO DO:
         // if (error) TRY AGAIN
@@ -77,7 +77,6 @@ exports.findModelOrCreate = function (name, source, url, accessToken, dataSource
 
     }
 
-    console.log('we reached the end of waterfall');
     var hatIdMapping = hat.mapDataSourceModelIds(result, '');
 
     callback(null, hatIdMapping);

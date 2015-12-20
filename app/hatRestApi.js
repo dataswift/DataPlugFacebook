@@ -92,8 +92,6 @@ exports.createRecords = function (record, callback) {
   internals.requestOptions.json = false;
   internals.requestOptions.body = internals.normalizeJsonValueTypes(record);
 
-  console.log(internals.requestOptions);
-
   request(internals.requestOptions, function (err, response, body) {
 
     internals.requestOptions.method = 'GET';
@@ -213,8 +211,7 @@ internals.generateHatValues = function (node, hatIdMapping, prefix) {
 /***************/
 
 internals.handleErrors = function (err, response) {
-  console.log("handle errors");
-  console.log(err);
+
   if (err) return err;
 
   switch (response.statusCode) {
