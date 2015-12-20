@@ -143,11 +143,11 @@ internals.mapDataSourceModelIds = function (table, prefix) {
 
 exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
-  if (typeof inputObj === 'array') {
+  if (_.isArray(inputObj)) {
 
     return _.map(inputObj, function (node) {
 
-      var values = hat.generateHatValues(node, hatIdMapping, '');
+      var values = internals.generateHatValues(node, hatIdMapping, '');
 
       return {
         record: { name: name },
@@ -156,7 +156,7 @@ exports.transformObjectToHat = function (name, inputObj, hatIdMapping) {
 
     });
 
-  } else if (typeof inputObj === 'object') {
+  } else if (_.isObject(inputObj)) {
 
     var values = internals.generateHatValues(inputObj, hatIdMapping, '');
 
@@ -179,11 +179,12 @@ internals.generateHatValues = function (node, hatIdMapping, prefix) {
   var convertedData = _.map(node, function (value, key) {
 
     if (typeof value === 'object') {
-      if (typeof value === 'array') {
-        return _.map(value, function(valueItem) {
-          internals.generateHatValues(valueItem, hatIdMapping, prefix+key)
-        })
-      }
+      // Use lodash to check for arrays
+      // if (typeof value === 'array') {
+      //   return _.map(value, function(valueItem) {
+      //     internals.generateHatValues(valueItem, hatIdMapping, prefix+key)
+      //   })
+      // }
       // FIXME: next prefix should be prefix_key
       return internals.generateHatValues(value, hatIdMapping, prefix+key);
 

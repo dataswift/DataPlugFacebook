@@ -8,14 +8,19 @@ describe('HAT Transformer', function() {
     expect(testIdMapping).to.eql(hatIdMapping);
   });
 
-  it('convert simple objects to HAT data structures', function() {
+  it('converts simple objects to HAT data structures', function() {
     var transformedData = hat.transformObjectToHat('givenString', sampleData, hatIdMapping);
     expect(transformedData).to.deep.equal(sampleHatRecord);
   });
 
-  it('convert nested objects to HAT data structures', function() {
+  it('converts nested objects to HAT data structures', function() {
     var transformedData = hat.transformObjectToHat('givenString', sampleFacebookData, hatIdMapping);
     expect(transformedData).to.deep.equal(hatRecord);
+  });
+
+  it('converts arrays of objects to HAT data structure', function() {
+    var transformedData = hat.transformObjectToHat('givenString', sampleDataArray, hatIdMapping);
+    expect(transformedData).to.deep.equal(hatRecordArray);
   });
 
 });
@@ -129,3 +134,6 @@ var hatRecord = [{
     "field": { "name": "rsvp_status", "id": 8 }
   }]
 }];
+
+var sampleDataArray = [sampleData, sampleFacebookData];
+var hatRecordArray = [sampleHatRecord[0], hatRecord[0]];
