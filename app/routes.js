@@ -4,7 +4,7 @@ var request = require('request');
 var models = require('./models');
 var services = require('./services');
 var fbConfig = require('./config/fbHatModels');
-var appConfig = require('./config');
+var config = require('./config');
 
 router.get('/facebook', function (req, res, next) {
 
@@ -24,8 +24,8 @@ router.get('/facebook', function (req, res, next) {
           title: 'Welcome to HAT Facebook Data Plug',
           stepInformation: 'Step 1 - Authorise us to access your private Facebook data',
           facebookAppId: process.env.FB_APP_ID,
-          redirectUri: appConfig.appBaseUrl + '/facebook/authenticate',
-          fbAccessScope: appConfig.fbAccessScope });
+          redirectUri: config.webServerURL + '/facebook/authenticate',
+          fbAccessScope: config.fb.accessScope });
 
     });
 
@@ -39,8 +39,8 @@ router.get('/facebook/authenticate', function (req, res, next) {
   if (req.query.code) {
 
     var tokenRequestUrl = 'https://graph.facebook.com/v2.5/oauth/access_token?client_id=' +
-      process.env.FB_APP_ID + '&redirect_uri=' + appConfig.appBaseUrl + '/facebook/authenticate&client_secret=' +
-      process.env.FB_APP_SECRET + '&code=' + req.query.code;
+      config.fb.appID + '&redirect_uri=' + config.webServerURL + '/facebook/authenticate&client_secret=' +
+      config.fb.appSecret + '&code=' + req.query.code;
 
     request.get(tokenRequestUrl, function (err, response, body) {
         if (err) return res.send('Facebook authentication failed.');
@@ -59,7 +59,7 @@ router.get('/facebook/authenticate', function (req, res, next) {
     res.render('services', {
     title: 'HAT Facebook Data Plug',
     stepInformation: 'Step 2 - Schedule record synchronisation',
-    hatServicesLink: appConfig.appBaseUrl + '/services' });
+    hatServicesLink: config.webServerURL + '/services' });
   } else {
     res.send('Authentication with facebook failed. Please start again.');
   }
