@@ -15,7 +15,7 @@ spec:
       limits:
         cpu: "100m"
     ports:
-    - containerPort: 30080
+    - containerPort: 27017 #mongo port
   - name: facebook-dataplug #------------------------------------------------------------------------
     image: hubofallthings/facebook-dataplug:latest
     resources:
@@ -24,7 +24,7 @@ spec:
       limits:
         cpu: "100m"
     ports:
-    - containerPort: 3000 #not exposed in node nor are there any special NAT rules to route traffic to the pod
+    - containerPort: 30080 #not exposed in node nor are there any special NAT rules to route traffic to the pod
     env:
     - name: NODE_ENV
       value: production
