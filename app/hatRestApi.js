@@ -174,8 +174,13 @@ internals.generateHatValues = function (node, hatIdMapping, prefix) {
   var convertedData = _.map(node, function (value, key) {
 
     if (typeof value === 'object') {
-
-      return exports.transformObjectToHat(value, hatIdMapping, key);
+      if (typeof value === 'array') {
+        return _.map(value, function(valueItem) {
+          internals.generateHatValues(valueItem, hatIdMapping, prefix+'_'+key)
+        })
+      }
+      // FIXME: next prefix should be prefix_key
+      return internals.generateHatValues(value, hatIdMapping, key);
 
     } else {
 
