@@ -98,7 +98,7 @@ router.post('/services', function (req, res, next) {
           function (err, newAccount) {
 
               completed++;
-              services.addUpdateJob(dataSource, 'facebook', req.session.hatAccessToken, '2 minutes');
+              services.addUpdateJob(dataSource, 'facebook', req.session.hatAccessToken, '1 day');
 
               if (completed >= numberOfDataSources) {
                 res.send('Congratulations! ' + dataSources + ' are now being automatically synchronized with your HAT.');
