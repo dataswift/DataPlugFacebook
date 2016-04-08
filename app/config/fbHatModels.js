@@ -51,6 +51,7 @@ var hatDataSourceConfig = {
       { name: "name" },
       { name: "object_id" },
       { name: "picture" },
+      { name: "full_picture" },
       { name: "status_type" },
       { name: "story" },
       { name: "type" },

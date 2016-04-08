@@ -4,9 +4,9 @@ var facebookQueryFields_v_2_5 = {
      'created_time', 'description', 'feed_targeting', 'from', 'icon', 'is_hidden',
      'is_published', 'link', 'message', 'message_tags', 'name', 'object_id', 'picture',
      'place', 'privacy', 'properties', 'shares', 'source', 'status_type', 'story',
-     'targeting', 'to', 'type', 'updated_time', 'with_tags'],
+     'targeting', 'to', 'type', 'updated_time', 'with_tags', 'full_picture'],
     availableEdges: ['likes', 'comments', 'sharedposts', 'insights', 'attachments'],
-    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
+    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'full_picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
   },
 
   profile: {
