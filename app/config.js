@@ -18,7 +18,7 @@ config.mongodb = {
 config.fb = {
   appID: process.env.FB_APP_ID,
   appSecret: process.env.FB_APP_SECRET,
-  accessScope: 'public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
+  accessScope: 'user_about_me,user_birthday,public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
 };
 
 if (TEST) config.webServer.port = 5525;
