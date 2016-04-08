@@ -51,6 +51,7 @@ var hatDataSourceConfig = {
       { name: "name" },
       { name: "object_id" },
       { name: "picture" },
+      { name: "full_picture" },
       { name: "status_type" },
       { name: "story" },
       { name: "type" },
@@ -117,18 +118,6 @@ var hatDataSourceConfig = {
         fields: [
           { name: "id" },
           { name: "name" }
-        ]
-      }, {
-        name: "security_settings",
-        source: "facebook",
-        subTables: [
-          {
-            name: "secure_browsing",
-            source: "facebook",
-            fields: [
-              { name: "enabled" }
-            ]
-          }
         ]
       }, {
         name: "significant_other",

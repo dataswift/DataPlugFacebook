@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  h1= title
+  p= stepInformation
+  form(action=hatServicesLink, method='post')
+    input(type="checkbox", name="dataSources", value="posts")
+    | Posts
+    br
+    input(type="checkbox", name="dataSources", value="events")
+    | Events
+    br
+    input(type="checkbox", name="dataSources", value="profile")
+    | Profile
+    br
+    input(type="submit", value="Authorise synchronisation")

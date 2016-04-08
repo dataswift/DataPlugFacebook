@@ -4,9 +4,9 @@ var facebookQueryFields_v_2_5 = {
      'created_time', 'description', 'feed_targeting', 'from', 'icon', 'is_hidden',
      'is_published', 'link', 'message', 'message_tags', 'name', 'object_id', 'picture',
      'place', 'privacy', 'properties', 'shares', 'source', 'status_type', 'story',
-     'targeting', 'to', 'type', 'updated_time', 'with_tags'],
+     'targeting', 'to', 'type', 'updated_time', 'with_tags', 'full_picture'],
     availableEdges: ['likes', 'comments', 'sharedposts', 'insights', 'attachments'],
-    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
+    used: ['id', 'application', 'caption', 'created_time', 'description', 'from', 'link', 'message', 'name','object_id', 'picture', 'full_picture', 'privacy', 'status_type', 'story', 'type', 'updated_time']
   },
 
   profile: {
@@ -19,9 +19,9 @@ var facebookQueryFields_v_2_5 = {
     'third_party_id', 'timezone', 'token_for_business', 'updated_time',
     'shared_login_upgrade_required_by', 'verified', 'video_upload_limits', 'viewer_can_send_gift',
     'website', 'work', 'public_key', 'cover'],
-    used: ['id', 'about', 'bio', 'birthday', 'email', 'first_name', 'gender', 'hometown',
-    'is_verified', 'last_name', 'locale', 'middle_name', 'name', 'political', 'relationship_status',
-    'religion', 'security_settings', 'significant_other', 'sports', 'quotes', 'third_party_id',
+    used: ['id', 'birthday', 'email', 'first_name', 'gender', 'hometown',
+    'is_verified', 'last_name', 'locale', 'name', 'political', 'relationship_status',
+    'religion', 'quotes', 'significant_other', 'third_party_id',
     'timezone', 'updated_time', 'verified', 'website']
   },
 
@@ -44,7 +44,7 @@ var facebookQueryFields_v_2_5 = {
     if (lastUpdate) {
       graphRequestUrl += '&since='+lastUpdate;
     }
-    console.log(graphRequestUrl);
+
     return graphRequestUrl;
   }
 };

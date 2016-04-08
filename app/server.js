@@ -2,13 +2,13 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 var errors = require('./errors');
-var routes = require('./routes/index');
-var facebook = require('./routes/facebook');
+var config = require('./config');
+var routes = require('./routes');
 
 var app = express();
 
@@ -21,23 +21,18 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(require('express-session')({
+app.use(session({
   secret: 'very secret secret',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/facebook', facebook);
 
 // mongoose
-if (process.env.MONGOLAB_URI) {
-  mongoose.connect(process.env.MONGOLAB_URI);
-} else {
-  mongoose.connect('mongodb://localhost:27017/HAT_sync_accounts');
-}
+
+mongoose.connect(config.dbURL);
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);

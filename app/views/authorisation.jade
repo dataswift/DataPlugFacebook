@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome
+  p= stepInformation
+  form(action=hatPostLink, method="post")
+    div
+      label HAT Access Token
+      br
+      input(type="text", name="hatAccessToken")
+    div
+      label HAT URL
+      br
+      input(type="text", name="hatUrl")
+    br
+    input(type="submit", value="Register/Log In")
+  br
+  hr
+
+

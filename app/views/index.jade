@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1= title
+  p= stepInformation
+
+  a(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Sync with Facebook
+  br
+  hr
