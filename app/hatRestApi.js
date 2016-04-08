@@ -23,7 +23,6 @@ internals.requestOptions = {
   headers: {
     "User-Agent": "MyClient/1.0.0",
     "Accept": "application/json",
-    "Host": "example.hatdex.org",
     "Content-Type": "application/json"
   },
   json: true
