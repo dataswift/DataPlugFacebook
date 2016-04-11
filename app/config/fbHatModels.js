@@ -129,6 +129,17 @@ var hatDataSourceConfig = {
       }
     ]
   }
+  profilePicture: {
+    name: "profile_picture",
+    source: "facebook",
+    fields: [
+      { name: "height" },
+      { name: "width" },
+      { name: "is_silhouette" },
+      { name: "url" }
+    ],
+    subTables: []
+  }
 }
 
 module.exports = hatDataSourceConfig;

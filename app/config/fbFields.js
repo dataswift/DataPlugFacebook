@@ -32,6 +32,13 @@ var facebookQueryFields_v_2_5 = {
     used: ['id', 'name', 'description', 'start_time', 'end_time', 'rsvp_status', 'place']
   },
 
+  getProfilePictureUrl: function(graphAccessToken) {
+    var graphRequestUrl = 'https://graph.facebook.com/me/picture?';
+    graphRequestUrl += 'access_token='+graphAccessToken+'&height=320&width=320&redirect=false';
+
+    return graphRequestUrl;
+  },
+
   getRequestUrl: function(node, graphAccessToken, lastUpdate) {
     var graphRequestUrl = 'https://graph.facebook.com/me/';
 
