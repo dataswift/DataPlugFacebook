@@ -71,6 +71,8 @@ router.post('/services', function (req, res, next) {
   var dataSources = req.body.dataSources;
   if (typeof dataSources === 'string') dataSources = [dataSources];
 
+  services.setProfilePicture(req.session.accountId, req.session.hatUrl, req.session.hatAccessToken, fbConfig['profilePicture'], req.session.fbAccessToken);
+
   var numberOfDataSources = dataSources.length;
   var completed = 0;
 

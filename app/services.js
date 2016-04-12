@@ -61,6 +61,8 @@ exports.addUpdateJob = function (name, source, hatAccessToken, frequency) {
 
 exports.findModelOrCreate = function (name, source, url, accessToken, dataSourceModelConfig, callback) {
 
+  console.log(name, source, url, accessToken, dataSourceModelConfig);
+
   hat.setUrl(url);
   hat.setAccessToken(accessToken);
 
@@ -89,6 +91,50 @@ exports.findModelOrCreate = function (name, source, url, accessToken, dataSource
 
   });
 
+};
+
+exports.setProfilePicture = function (accountId, hatUrl, hatAccessToken, hatFieldConfig, fbAccessToken) {
+  exports.findModelOrCreate('profile_picture', 'facebook', hatUrl, hatAccessToken, hatFieldConfig, function (err, hatIdMapping) {
+
+    var hatDataSource = {
+      name: 'profilePicture',
+      source: 'facebook',
+      sourceAccessToken: fbAccessToken,
+      dataSourceModel: hatFieldConfig,
+      hatIdMapping: hatIdMapping,
+      lastUpdated: '1'
+    };
+
+    var newDbEntry = new models.HatDataSource(hatDataSource);
+
+    newDbEntry.save(function (err, result) {
+      if (err) return console.log(err);
+
+      models.Accounts.findByIdAndUpdate(
+        accountId,
+        { $push: { 'dataSources': result._id } },
+        { safe: true, upsert: true, new: true },
+        function (err, newAccount) {
+
+          var requestOptions = {
+            url: fbReqGen.getProfilePictureUrl(hatDataSource.sourceAccessToken),
+            method: 'GET',
+            json: true
+          };
+
+          request(requestOptions, function (err, response, body) {
+            if (err) return console.log(err);
+
+            var hatRecord = hat.transformObjectToHat('profilePicture', body.data, hatIdMapping);
+
+            hat.createRecords(hatRecord, hatAccessToken, function (err) {
+              if (err) return console.log(err);
+              console.log('[INFO] Profile picture posted!');
+            });
+          });
+      });
+    });
+  });
 };
 
 internals.getGraphNode = function (node, accessToken, lastUpdated, callback) {

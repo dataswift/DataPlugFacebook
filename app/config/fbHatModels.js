@@ -128,7 +128,7 @@ var hatDataSourceConfig = {
         ]
       }
     ]
-  }
+  },
   profilePicture: {
     name: "profile_picture",
     source: "facebook",

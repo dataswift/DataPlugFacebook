@@ -43,7 +43,7 @@ exports.getDataSourceId = function (name, source, callback) {
     internals.requestOptions.qs.source = null;
     var foundError = internals.handleErrors(err, response);
     var dataSourceId;
-    if (body.id) {
+    if (body && body.id) {
       dataSourceId = body.id;
     }
 

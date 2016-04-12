@@ -33,9 +33,9 @@ var facebookQueryFields_v_2_5 = {
   },
 
   getProfilePictureUrl: function(graphAccessToken) {
-    var graphRequestUrl = 'https://graph.facebook.com/me/picture?';
-    graphRequestUrl += 'access_token='+graphAccessToken+'&height=320&width=320&redirect=false';
-
+    var graphRequestUrl = 'https://graph.facebook.com/me/picture/';
+    graphRequestUrl += '?access_token='+graphAccessToken+'&height=320&width=320&redirect=false';
+    console.log('URL', graphRequestUrl);
     return graphRequestUrl;
   },
 
