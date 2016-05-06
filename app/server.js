@@ -8,7 +8,9 @@ var mongoose = require('mongoose');
 
 var errors = require('./errors');
 var config = require('./config');
-var routes = require('./routes');
+
+const indexRoute = require('./routes/index');
+const dataPlugRoute = require('./routes/dataPlug');
 
 var app = express();
 
@@ -28,7 +30,8 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.use('/', indexRoute);
+app.use('/dataplug', dataPlugRoute);
 
 // mongoose
 

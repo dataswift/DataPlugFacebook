@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 HAT Details
+  p Tell us more about where your HAT is and how can we access it
+
+  div
+    form(name="hat-details", method="post", action="/dataplug/hat")
+      div.input
+        span.label HAT URL Address
+        input(type="text", name="hat-url")
+      div.input
+        span.label HAT Access Token
+        input(type="text" name="hat-access-token")
+      div.actions
+        input(type="submit", value="Submit")
+  br
+  hr
