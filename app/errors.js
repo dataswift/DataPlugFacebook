@@ -1,4 +1,10 @@
-var errorHandlers = {
+const errorHandlers = {
+  badRequest: (req, res, next) => {
+    var err = new Error('Bad Request');
+    err.status = 400;
+    return res.render('error', { errors: err });
+  },
+
   notFound: function(req, res, next) {
     var err = new Error('Page Not Found');
     err.status = 404;

@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const HatDataSourceSchema = new Schema({
-  hatAccessToken:     { type: String, required: true },
   hatHost:            { type: String, required: true },
+  hatAccessToken:     { type: String, required: true },
   name:               { type: String, required: true },
   source:             { type: String, required: true },
   sourceHatId:        Number,
@@ -14,4 +14,4 @@ const HatDataSourceSchema = new Schema({
   lastUpdated:        String
 });
 
-exports.HatDataSource = mongoose.model('HatDataSource', HatDataSourceSchema);
+module.exports = mongoose.model('HatDataSource', HatDataSourceSchema);
