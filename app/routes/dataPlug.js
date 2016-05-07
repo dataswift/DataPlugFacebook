@@ -11,10 +11,7 @@ router.get('/', (req, res, next) => {
 router.post('/hat', (req, res, next) => {
   if (!req.body['hat_url']) return next();
 
-  console.log(req.body);
-
   db.countDataSources(req.body['hat_url'], (err, count) => {
-    console.log(err);
     if (err) return next();
 
     if (count === 0) {
@@ -29,5 +26,9 @@ router.post('/hat', (req, res, next) => {
 
   });
 }, errors.badRequest);
+
+router.get('/options', (req, res, next) => {
+  res.send('It works!!');
+});
 
 module.exports = router;
