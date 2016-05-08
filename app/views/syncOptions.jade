@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  h1 Facebook Synchronization Options
+  p Please select categories to be synchronized
+  p Note: Your profile picture will be synchronized with HAT automatically
+  form(name="sync_options", method='post', action="/dataplug/options")
+    input(type="checkbox", name="data_source", value="posts")
+    | Posts
+    br
+    input(type="checkbox", name="data_source", value="events")
+    | Events
+    br
+    input(type="checkbox", name="data_source", value="profile")
+    | Profile
+    br
+    input(type="submit", value="Synchronize")

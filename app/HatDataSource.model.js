@@ -11,7 +11,7 @@ const HatDataSourceSchema = new Schema({
   dataSourceModel:    Schema.Types.Mixed,
   hatIdMapping:       Schema.Types.Mixed,
   updateFrequency:    String,
-  lastUpdated:        String
+  latestRecordDate:   String
 });
 
 module.exports = mongoose.model('HatDataSource', HatDataSourceSchema);
