@@ -17,13 +17,23 @@ exports.createDataSources = (names, source, hatUrl, hatAT, sourceAT, callback) =
       hatAccessToken: hatAT,
       name: name,
       source: source,
-      sourceHatId: 0,
       sourceAccessToken: sourceAT,
       dataSourceModel: fbHatModels[name],
+      dataSourceModelId: 0,
       updateFrequency: '0',
       latestRecordDate: '1'
     };
   });
 
   HatDataSource.create(newDbEntries, callback);
+};
+
+exports.updateDataSource = (newValueObj, dataSource, callback) => {
+  const dataSourceFindParams = {
+    hatHost: dataSource.hatHost,
+    name: dataSource.name,
+    source: dataSource.source
+  };
+
+  HatDataSource.update(newValueObj, dataSourceFindParams, callback);
 };

@@ -6,9 +6,9 @@ const HatDataSourceSchema = new Schema({
   hatAccessToken:     { type: String, required: true },
   name:               { type: String, required: true },
   source:             { type: String, required: true },
-  sourceHatId:        Number,
   sourceAccessToken:  String,
   dataSourceModel:    Schema.Types.Mixed,
+  dataSourceModelId:  Number,
   hatIdMapping:       Schema.Types.Mixed,
   updateFrequency:    String,
   latestRecordDate:   String
