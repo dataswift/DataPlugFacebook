@@ -47,7 +47,11 @@ router.post('/options', (req, res, next) => {
                        (err, savedEntries) => {
     if (err) return next();
 
-    return res.render('confirmation');
+      db.createUpdateJobs(savedEntries, (err, savedJobs) => {
+        if (err) return next();
+
+        return res.render('confirmation');
+      });
 
   }, errors.badRequest);
 
