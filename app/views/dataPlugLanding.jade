@@ -1,18 +1,16 @@
 extends layout
 
 block content
-  h1 HAT Details
-  p Tell us more about where your HAT is and how can it be accessed
+  .wrapper
+    .container
+      h1 HAT Details
+      p.plug-info Tell us more about where your HAT is and how can it be accessed.
 
-  div
-    form(name="hat_details", method="post", action="/dataplug/hat")
-      div.input
-        span.label HAT URL Address
-        input(type="text", name="hat_url")
-      div.input
-        span.label HAT Access Token
-        input(type="text" name="hat_access_token")
-      div.actions
-        input(type="submit", value="Submit")
-  br
-  hr
+      div.form
+        form(name="hat_details", method="post", action="/dataplug/hat")
+          <!-- span.label HAT URL Address -->
+          input(type="text", name="hat_url", placeholder="HAT URL Address")
+          <!-- span.label HAT Access Token -->
+          input(type="text" name="hat_access_token", placeholder="HAT Access Token")
+          div.actions
+            input.plug-button(type="submit", value="Submit")

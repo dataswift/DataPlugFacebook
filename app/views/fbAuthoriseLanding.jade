@@ -1,10 +1,10 @@
 extends layout
 
 block content
-  h1 Facebook Authorization
-  p You will be now redirected to Facebook's website to authorize Data Plug's access
+  .wrapper
+    .container
+      h1 Facebook Authorization
+      p.plug-info You will be now redirected to Facebook's website to authorize Data Plug's access
 
-  div.actions
-    a(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Authorize Plug with Facebook
-  br
-  hr
+      div.plug-button-wrapper
+        a.plug-button(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Authorize Plug with Facebook
