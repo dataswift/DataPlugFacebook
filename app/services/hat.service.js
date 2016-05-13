@@ -5,6 +5,8 @@ const _ = require('lodash');
 const db = require('../services/db.service');
 const fb = require('../services/fb.service');
 
+var internals = {};
+
 exports.updateDataSource = (dataSource, callback) => {
   if (!dataSource.hatIdMapping) {
     return callback(new Error('Updated cancelled. Inconsistent database record'));
@@ -24,7 +26,7 @@ exports.updateDataSource = (dataSource, callback) => {
 
   async.waterfall(procedure, (err, records) => {
     if (err) {
-      console.log('There has been a problem updating ' + dataSource.hatHost ' at ' + Date.now());
+      console.log('There has been a problem updating ' + dataSource.hatHost + ' at ' + Date.now());
       return callback(err);
     } else {
       return callback(null);
@@ -32,25 +34,30 @@ exports.updateDataSource = (dataSource, callback) => {
   });
 };
 
-exports.createDataSource = (dataSource, callback) => {
-  var client = new hat.Client(dataSource.hatHost, dataSource.hatAccessToken);
-  hat.createDataSourceModel(dataSource.dataSourceModel, (err, createdModel) => {
-    db.updateDataSource({ dataSourceModelId: createdModel.id }, dataSource, callback);
-  });
-};
+exports.mapOrCreateModel = (dataSource, callback) => {
+  const client = new hat.Client(dataSource.hatHost, dataSource.hatAccessToken);
 
-exports.retrieveHatIdMapping = (dataSource, callback) => {
-  var client = new hat.Client(dataSource.hatHost, dataSource.hatAccessToken);
-  hat.getDataSourceModel(dataSource.dataSourceModelId, (err, model) => {
+  if (!dataSource.dataSourceModelId) {
+    client.createDataSourceModel(dataSource.dataSourceModel, (err, createdModel) => {
+      if (err) return callback(err);
+      db.updateDataSource({ dataSourceModelId: createdModel.id }, dataSource, (err, savedDataSource) => {
+        if (err) return callback(err);
+        exports.mapOrCreateModel(savedDataSource, callback);
+      });
+    });
+  } else if (!dataSource.hatIdMapping) {
+    client.getDataSourceModel(dataSource.dataSourceModelId, (err, model) => {
+      try {
+        const hatIdMapping = hat.transform.mapDataSourceModelIds(model);
+      } catch (e) {
+        return callback(err);
+      }
 
-    try {
-      const hatIdMapping = hat.transform.mapDataSourceModelIds(model);
-    } catch (e) {
-      return callback(err);
-    }
-
-    db.updateDataSource({ hatIdMapping: hatIdMapping }, dataSource, callback);
-  });
+      db.updateDataSource({ hatIdMapping: hatIdMapping }, dataSource, callback);
+    });
+  } else {
+    return callback(null);
+  }
 };
 
 internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {

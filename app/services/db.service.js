@@ -30,14 +30,14 @@ exports.createDataSources = (names, source, hatUrl, hatAT, sourceAT, callback) =
   HatDataSource.create(newDbEntries, callback);
 };
 
-exports.updateDataSource = (newValueObj, dataSource, callback) => {
+exports.updateDataSource = (docUpdate, dataSource, callback) => {
   const dataSourceFindParams = {
     hatHost: dataSource.hatHost,
     name: dataSource.name,
     source: dataSource.source
   };
 
-  HatDataSource.findOneAndUpdate(dataSourceFindParams, newValueObj, { new: true }, callback);
+  HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
 };
 
 exports.createUpdateJobs = (dataSources, callback) => {
@@ -63,7 +63,44 @@ exports.createUpdateJobs = (dataSources, callback) => {
   UpdateJob.create(newDbEntries, callback);
 };
 
+exports.findDueJobs = (onQueueJobs, callback) => {
 
+  UpdateJob.find({ nextRunAt: { $lt: new Date() },
+                   _id: { $nin: onQueueJobs } })
+    .populate('dataSource')
+    .exec(callback);
+};
+
+exports.lockJob = (jobId, callback) => {
+  const docUpdate = {
+    lastRunAt: new Date(),
+    lockedAt: new Date()
+  };
+
+  UpdateJob.findByIdAndUpdate(jobId, docUpdate, { new: true }, callback);
+};
+
+exports.updateSuccessJob = (job, callback) => {
+  const currentTime = new Date();
+  const docUpdate = {
+    nextRunAt: new Date(currentTime.getTime() + job.repeatInterval),
+    lastSuccessAt: currentTime,
+    lockedAt: null
+  };
+
+  UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
+};
+
+exports.updateFailJob = (job, callback) => {
+  const currentTime = new Date();
+  const docUpdate = {
+    nextRunAt: new Date(currentTime.getTime() + 60 * 1000),
+    lastFailureAt: currentTime,
+    lockedAt: null
+  };
+
+  UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
+};
 
 
 
