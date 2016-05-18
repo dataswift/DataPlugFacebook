@@ -1,9 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p= stepInformation
+  .wrapper
+    .container
+      h1 HAT Data Plug for Facebook
+      p.plug-info A supplementary HAT tool giving you the power to synchronize Facebook data with your personal HAT. Give it a try and see your profile details, posts and events magically appear on your own HAT.
+      p.plug-info
+        span There is just few simple steps to get us going:
+        ol
+          li Authorise the Plug to access your private Facebook data
+          li Select the categories for synchronization
+          li See your data appear on the HAT
 
-  a(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Sync with Facebook
-  br
-  hr
+      div.plug-button-wrapper
+        a.plug-button(href="/dataplug") Start Here
+      div.plug-button-wrapper
+        a.plug-button(href="/dataplug/details") Learn more about your data

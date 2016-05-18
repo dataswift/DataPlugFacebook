@@ -5,14 +5,14 @@ var config = {};
 config.currentEnv = process.env.NODE_ENV || 'development';
 
 config.webServer = {
+  host: process.env.HOST || 'localhost',
   port: normalizePort(process.env.PORT || 3000),
-  host: process.env.HOST || 'localhost'
 };
 
 config.mongodb = {
-  port: process.env.MONGODB_PORT || 27017,
   host: process.env.MONGODB_HOST || 'localhost',
-  db: 'hat_sync'
+  port: process.env.MONGODB_PORT || 27017,
+  db: 'data_plug_fb'
 };
 
 config.fb = {
@@ -21,12 +21,32 @@ config.fb = {
   accessScope: 'user_about_me,user_birthday,public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
 };
 
+config.market = {
+  host: 'marketsquare.hubofallthings.net',
+  id: process.env.MARKET_ID,
+  accessToken: process.env.MARKET_ACCESS_TOKEN
+};
+
+config.hat = {
+  username: process.env.HAT_USER,
+  password: process.env.HAT_PASSWORD
+};
+
+config.updateIntervals = {
+  profile: 7 * 24 * 60 * 60 * 1000,
+  events: 24 * 60 * 60 * 1000,
+  posts: 5 * 60 * 1000
+};
+
 if (TEST) config.webServer.port = 5525;
 
 config.webServerURL = 'http://' + config.webServer.host + ':' + config.webServer.port;
 
 config.dbURL = 'mongodb://' + config.mongodb.host + ':' + config.mongodb.port +
 '/' + config.mongodb.db + '_' + config.currentEnv;
+
+config.market.url = 'http://' + config.market.host + '/api/dataplugs/' + config.market.id +
+'/connect';
 
 module.exports = config;
 

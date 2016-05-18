@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -8,9 +10,15 @@ var mongoose = require('mongoose');
 
 var errors = require('./errors');
 var config = require('./config');
-var routes = require('./routes');
+
+const indexRoutes = require('./routes/index');
+const dataPlugRoutes = require('./routes/dataPlug');
+const callbackRoutes = require('./routes/callback');
+const updateSvc = require('./services/update.service');
 
 var app = express();
+
+app.disable('etag');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,9 +34,11 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/', routes);
+app.use('/', indexRoutes);
+app.use('/dataplug', dataPlugRoutes);
+app.use('/facebook', callbackRoutes);
 
 // mongoose
 
