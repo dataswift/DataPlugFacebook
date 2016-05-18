@@ -8,6 +8,7 @@ var onQueueJobs = [];
 function work(item, cb)  {
   db.lockJob(item.info._id, (err, savedJob) => {
     if (err) {
+      console.log(err);
       onQueueJobs.shift();
       cb();
     }
@@ -51,7 +52,7 @@ setInterval(() => {
     console.log(results);
     const tasks = results.map((result) => {
       var taskName;
-      if (!result.dataSource.hatIdMapping || !result.dataSoure.dataSourceModelId) {
+      if (!result.dataSource.dataSourceModelId || !result.dataSource.hatIdMapping) {
         taskName = "CREATE_MODEL";
       } else {
         taskName = "UPDATE_RECORDS";
@@ -77,4 +78,4 @@ setInterval(() => {
       console.log('All tasks submitted to queue.');
     });
   });
-}, 60 * 1000);
+}, 5 * 60 * 1000);
