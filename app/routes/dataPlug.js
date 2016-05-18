@@ -1,33 +1,48 @@
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const errors = require('../errors');
 const db = require('../services/db.service');
+const hat = require('../services/hat.service');
+const market = require('../services/market.service');
 const config = require('../config');
 
 router.get('/', (req, res, next) => {
-  return res.render('dataPlugLanding');
+  return res.render('dataPlugLanding', { hatHost: req.query.hat });
 });
 
 router.post('/hat', (req, res, next) => {
   if (!req.body['hat_url']) return next();
 
   req.session.hatUrl = req.body['hat_url'];
-  req.session.hatAccessToken = req.body['hat_access_token'];
 
-  db.countDataSources(req.body['hat_url'], (err, count) => {
+  market.connectHat(req.session.hatUrl, (err) => {
+
     if (err) return next();
 
-    if (count === 0) {
-      return res.render('fbAuthoriseLanding', {
-        facebookAppId: config.fb.appID,
-        fbAccessScope: config.fb.accessScope,
-        redirectUri: config.webServerURL + '/facebook/authenticate',
-      });
-    } else {
-      return res.render('dataPlugStats');
-    }
+    hat.getAccessToken(req.session.hatUrl, (err, hatAccessToken) => {
 
+      if (err) return next();
+
+      req.session.hatAccessToken = hatAccessToken;
+
+      db.countDataSources(req.session.hatUrl, (err, count) => {
+        if (err) return next();
+
+        if (count === 0) {
+          return res.render('fbAuthoriseLanding', {
+            facebookAppId: config.fb.appID,
+            fbAccessScope: config.fb.accessScope,
+            redirectUri: config.webServerURL + '/facebook/authenticate',
+          });
+        } else {
+          return res.render('dataPlugStats');
+        }
+      });
+    });
   });
+
 }, errors.badRequest);
 
 router.get('/options', (req, res, next) => {

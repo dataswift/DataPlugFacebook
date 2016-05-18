@@ -1,11 +1,35 @@
 const hat = require('hat-node-sdk');
 const async = require('async');
 const _ = require('lodash');
+const request = require('request');
+const qs = require('qs');
 
 const db = require('../services/db.service');
 const fb = require('../services/fb.service');
+const config = require('../config');
 
 var internals = {};
+
+exports.getAccessToken = (hatHost, callback) => {
+  const reqOptions = {
+    url: 'http://' + hatHost + '/users/access_token',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    qs: {
+      username: config.hat.username,
+      password: config.hat.password
+    },
+    json: true
+  };
+
+  request.get(reqOptions, (err, res, body) => {
+    if (err) return callback(err);
+
+    return callback(null, body.accessToken);
+  });
+};
 
 exports.updateDataSource = (dataSource, callback) => {
   if (!dataSource.hatIdMapping) {
@@ -35,11 +59,12 @@ exports.updateDataSource = (dataSource, callback) => {
 };
 
 exports.mapOrCreateModel = (dataSource, callback) => {
-  const client = new hat.Client(dataSource.hatHost, dataSource.hatAccessToken);
+  const client = new hat.Client('http://' + dataSource.hatHost, dataSource.hatAccessToken);
 
   if (!dataSource.dataSourceModelId) {
     client.createDataSourceModel(dataSource.dataSourceModel, (err, createdModel) => {
       if (err) return callback(err);
+
       db.updateDataSource({ dataSourceModelId: createdModel.id }, dataSource, (err, savedDataSource) => {
         if (err) return callback(err);
         exports.mapOrCreateModel(savedDataSource, callback);
@@ -47,6 +72,7 @@ exports.mapOrCreateModel = (dataSource, callback) => {
     });
   } else if (!dataSource.hatIdMapping) {
     client.getDataSourceModel(dataSource.dataSourceModelId, (err, model) => {
+
       try {
         const hatIdMapping = hat.transform.mapDataSourceModelIds(model);
       } catch (e) {
@@ -69,7 +95,7 @@ internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {
   }
 };
 
-internals.createHatRecords = (hatUrl, hatAccessToken, records, callback) => {
-  var client = new hat.Client(hatUrl, hatAccessToken);
+internals.createHatRecords = (hatHost, hatAccessToken, records, callback) => {
+  var client = new hat.Client('http://' + hatHost, hatAccessToken);
   client.createMultipleRecords(records, callback);
 };

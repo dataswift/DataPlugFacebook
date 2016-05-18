@@ -9,8 +9,6 @@ block content
       div.form
         form(name="hat_details", method="post", action="/dataplug/hat")
           <!-- span.label HAT URL Address -->
-          input(type="text", name="hat_url", placeholder="HAT URL Address")
-          <!-- span.label HAT Access Token -->
-          input(type="text" name="hat_access_token", placeholder="HAT Access Token")
+          input(type="text", name="hat_url", placeholder="HAT URL Address", value=hatHost)
           div.actions
             input.plug-button(type="submit", value="Submit")

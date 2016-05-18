@@ -1,10 +1,12 @@
+'use strict';
+
 const HatDataSource = require('../HatDataSource.model');
 const UpdateJob = require('../UpdateJob.model');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
 
 exports.countDataSources = (hatUrl, callback) => {
-  HatDataSource.count({ hatHost: hatUrl }, (err, count) => {
+  return HatDataSource.count({ hatHost: hatUrl }, (err, count) => {
     if (err) return callback(err);
     return callback(null, count);
   });
@@ -21,13 +23,14 @@ exports.createDataSources = (names, source, hatUrl, hatAT, sourceAT, callback) =
       source: source,
       sourceAccessToken: sourceAT,
       dataSourceModel: fbHatModels[name],
-      dataSourceModelId: 0,
-      updateFrequency: '0',
+      dataSourceModelId: null,
+      hatIdMapping: null,
+      updateFrequency: config.updateIntervals[name],
       latestRecordDate: '1'
     };
   });
 
-  HatDataSource.create(newDbEntries, callback);
+  return HatDataSource.create(newDbEntries, callback);
 };
 
 exports.updateDataSource = (docUpdate, dataSource, callback) => {
@@ -37,7 +40,7 @@ exports.updateDataSource = (docUpdate, dataSource, callback) => {
     source: dataSource.source
   };
 
-  HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
+  return HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
 };
 
 exports.createUpdateJobs = (dataSources, callback) => {
@@ -60,15 +63,15 @@ exports.createUpdateJobs = (dataSources, callback) => {
     };
   });
 
-  UpdateJob.create(newDbEntries, callback);
+  return UpdateJob.create(newDbEntries, callback);
 };
 
 exports.findDueJobs = (onQueueJobs, callback) => {
 
-  UpdateJob.find({ nextRunAt: { $lt: new Date() },
-                   _id: { $nin: onQueueJobs } })
-    .populate('dataSource')
-    .exec(callback);
+  return UpdateJob.find({ nextRunAt: { $lt: new Date() },
+                          _id: { $nin: onQueueJobs } })
+                  .populate('dataSource')
+                  .exec(callback);
 };
 
 exports.lockJob = (jobId, callback) => {
@@ -77,7 +80,7 @@ exports.lockJob = (jobId, callback) => {
     lockedAt: new Date()
   };
 
-  UpdateJob.findByIdAndUpdate(jobId, docUpdate, { new: true }, callback);
+  return UpdateJob.findByIdAndUpdate(jobId, docUpdate, { new: true }, callback);
 };
 
 exports.updateSuccessJob = (job, callback) => {
@@ -88,7 +91,7 @@ exports.updateSuccessJob = (job, callback) => {
     lockedAt: null
   };
 
-  UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
+  return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
 };
 
 exports.updateFailJob = (job, callback) => {
@@ -99,7 +102,7 @@ exports.updateFailJob = (job, callback) => {
     lockedAt: null
   };
 
-  UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
+  return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
 };
 
 
