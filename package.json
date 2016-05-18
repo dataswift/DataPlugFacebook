@@ -1,12 +1,11 @@
 {
-  "name": "facebook_hat_data_plug",
-  "version": "0.0.2",
+  "name": "hat-facebook-data-plug",
+  "version": "0.1.0",
   "private": false,
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "agenda": "^0.7.2",
     "async": "^1.5.2",
     "body-parser": "~1.13.2",
     "debug": "~2.2.0",
