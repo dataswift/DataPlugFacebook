@@ -7,13 +7,15 @@ block content
       p.plug-info Please select categories to be synchronized
       p.plug-info Note: Your profile picture will be synchronized with HAT automatically
       form(name="sync_options", method='post', action="/dataplug/options")
-        input(type="checkbox", name="data_source", value="posts")
-        | Posts
-        br
-        input(type="checkbox", name="data_source", value="events")
-        | Events
-        br
-        input(type="checkbox", name="data_source", value="profile")
-        | Profile
+        div.check-group
+          input#chb-posts.pseudo-checkbox.sr-only(type="checkbox", name="data_source", value="posts")
+          label.checkbox-label(for="chb-posts") &nbsp;&nbsp;Posts
+        div.check-group
+          input#chb-events.pseudo-checkbox.sr-only(type="checkbox", name="data_source", value="events")
+          label.checkbox-label(for="chb-events") &nbsp;&nbsp;Events
+        div.check-group
+          input#chb-profile.pseudo-checkbox.sr-only(type="checkbox", name="data_source", value="profile")
+          label.checkbox-label(for="chb-profile") &nbsp;&nbsp;Profile
+
         div.actions
           input.plug-button(type="submit", value="Synchronize")
