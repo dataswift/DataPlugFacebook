@@ -17,9 +17,9 @@ router.post('/hat', (req, res, next) => {
 
   req.session.hatUrl = req.body['hat_url'];
 
-  market.connectHat(req.session.hatUrl, (err) => {
+  //market.connectHat(req.session.hatUrl, (err) => {
 
-    if (err) return next();
+    //if (err) return next();
 
     hat.getAccessToken(req.session.hatUrl, (err, hatAccessToken) => {
 
@@ -41,7 +41,7 @@ router.post('/hat', (req, res, next) => {
         }
       });
     });
-  });
+  //});
 
 }, errors.badRequest);
 

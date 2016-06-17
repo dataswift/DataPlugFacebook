@@ -1,7 +1,7 @@
 'use strict';
 
-const HatDataSource = require('../HatDataSource.model');
-const UpdateJob = require('../UpdateJob.model');
+const HatDataSource = require('../models/HatDataSource.model');
+const UpdateJob = require('../models/UpdateJob.model');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
 
