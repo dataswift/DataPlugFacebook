@@ -38,6 +38,11 @@ config.updateIntervals = {
   posts: 5 * 60 * 1000
 };
 
+config.updateService = {
+  repeatInterval: 60 * 1000,
+  dbCheckInterval: 10 * 60 * 1000
+}
+
 if (TEST) config.webServer.port = 5525;
 
 config.webServerURL = 'http://' + config.webServer.host + ':' + config.webServer.port;

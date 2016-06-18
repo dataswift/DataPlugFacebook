@@ -10,7 +10,6 @@ const HatDataSourceSchema = new Schema({
   dataSourceModel:    Schema.Types.Mixed,
   dataSourceModelId:  Number,
   hatIdMapping:       Schema.Types.Mixed,
-  updateFrequency:    String,
   latestRecordDate:   String
 });
 

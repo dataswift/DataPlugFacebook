@@ -25,7 +25,6 @@ exports.createDataSources = (names, source, hatUrl, hatAT, sourceAT, callback) =
       dataSourceModel: fbHatModels[name],
       dataSourceModelId: null,
       hatIdMapping: null,
-      updateFrequency: config.updateIntervals[name],
       latestRecordDate: '1'
     };
   });
@@ -83,28 +82,17 @@ exports.lockJob = (jobId, callback) => {
   return UpdateJob.findByIdAndUpdate(jobId, docUpdate, { new: true }, callback);
 };
 
-exports.updateSuccessJob = (job, callback) => {
-  const currentTime = new Date();
-  const docUpdate = {
-    nextRunAt: new Date(currentTime.getTime() + job.repeatInterval),
-    lastSuccessAt: currentTime,
+exports.updateCompleteJob = (job, isSuccess, nextRunAt, callback) => {
+  let docUpdate = {
+    nextRunAt: nextRunAt,
     lockedAt: null
   };
 
-  return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
-};
-
-exports.updateFailJob = (job, callback) => {
-  const currentTime = new Date();
-  const docUpdate = {
-    nextRunAt: new Date(currentTime.getTime() + 60 * 1000),
-    lastFailureAt: currentTime,
-    lockedAt: null
-  };
+  if (isSuccess) {
+    docUpdate.lastSuccessAt = new Date();
+  } else {
+    docUpdate.lastFailureAt = new Date();
+  }
 
   return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
 };
-
-
-
-
