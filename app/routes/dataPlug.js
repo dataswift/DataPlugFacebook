@@ -57,6 +57,8 @@ router.post('/options', (req, res, next) => {
 
   if (!dataSources) return res.redirect('/dataplug/options');
 
+  dataSources.push('profilePicture');
+
   db.createDataSources(dataSources,
                        'facebook',
                        req.session.hatUrl,

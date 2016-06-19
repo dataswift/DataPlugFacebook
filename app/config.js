@@ -35,7 +35,8 @@ config.hat = {
 config.updateIntervals = {
   profile: 7 * 24 * 60 * 60 * 1000,
   events: 24 * 60 * 60 * 1000,
-  posts: 5 * 60 * 1000
+  posts: 5 * 60 * 1000,
+  profilePicture: 100 * 24 * 60 * 60 * 1000
 };
 
 config.updateService = {

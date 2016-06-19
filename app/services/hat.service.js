@@ -55,6 +55,7 @@ exports.updateDataSource = (dataSource, callback) => {
       console.log('There has been a problem updating ' + dataSource.hatHost + ' at ' + Date.now());
       return callback(err);
     } else {
+      console.log('Update successful with ', records);
       return callback(null);
     }
   });
@@ -65,8 +66,6 @@ exports.mapOrCreateModel = (dataSource, callback) => {
 
   if (!dataSource.dataSourceModelId) {
     client.getDataSourceId(dataSource.name, dataSource.source, (err, model) => {
-      if (err) return callback(err);
-
       if (model && model.id) {
         db.updateDataSource({ dataSourceModelId: model.id }, dataSource, (err, savedDataSource) => {
           if (err) return callback(err);
