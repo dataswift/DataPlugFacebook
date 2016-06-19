@@ -29,8 +29,10 @@ exports.exchangeCodeForToken = (code, callback) => {
 
 exports.getGraphNode = (node, accessToken, lastUpdated, callback) => {
   let fbUrl;
-  if (node === 'profilePicture') {
+  if (node === 'profile_picture') {
     fbUrl = fbReqGenerator.getProfilePictureUrl(accessToken);
+  } else if (node === 'music_listens') {
+    fbUrl = fbReqGenerator.getBaseUrl(accessToken);
   } else {
     fbUrl = fbReqGenerator.getRequestUrl(node, accessToken, lastUpdated);
   }

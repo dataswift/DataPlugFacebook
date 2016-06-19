@@ -36,12 +36,13 @@ config.updateIntervals = {
   profile: 7 * 24 * 60 * 60 * 1000,
   events: 24 * 60 * 60 * 1000,
   posts: 5 * 60 * 1000,
-  profilePicture: 100 * 24 * 60 * 60 * 1000
+  profile_picture: 100 * 24 * 60 * 60 * 1000,
+  music_listens: 24 * 60 * 60 * 1000,
 };
 
 config.updateService = {
   repeatInterval: 60 * 1000,
-  dbCheckInterval: 10 * 60 * 1000
+  dbCheckInterval: 2 * 60 * 1000
 }
 
 if (TEST) config.webServer.port = 5525;
