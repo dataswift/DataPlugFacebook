@@ -12,13 +12,12 @@ exports.countDataSources = (hatUrl, callback) => {
   });
 };
 
-exports.createDataSources = (names, source, hatUrl, hatAT, sourceAT, callback) => {
+exports.createDataSources = (names, source, hatUrl, sourceAT, callback) => {
   if (typeof names === 'string') names = [names];
 
   const newDbEntries = names.map((name) => {
     return {
       hatHost: hatUrl,
-      hatAccessToken: hatAT,
       name: name,
       source: source,
       sourceAccessToken: sourceAT,

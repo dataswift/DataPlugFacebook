@@ -63,7 +63,6 @@ router.post('/options', (req, res, next) => {
   db.createDataSources(dataSources,
                        'facebook',
                        req.session.hatUrl,
-                       req.session.hatAccessToken,
                        req.session.sourceAccessToken,
                        (err, savedEntries) => {
     if (err) return next();
@@ -71,7 +70,7 @@ router.post('/options', (req, res, next) => {
       db.createUpdateJobs(savedEntries, (err, savedJobs) => {
         if (err) return next();
 
-        update.addInitJobs(savedEntries);
+        update.addInitJobs(savedEntries, req.session.hatAccessToken);
         return res.render('confirmation');
       });
 
