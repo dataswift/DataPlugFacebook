@@ -35,7 +35,7 @@ config.hat = {
 config.updateIntervals = {
   profile: 7 * 24 * 60 * 60 * 1000,
   events: 24 * 60 * 60 * 1000,
-  posts: 5 * 60 * 1000,
+  posts: 1 * 60 * 60 * 1000,
   profile_picture: 100 * 24 * 60 * 60 * 1000,
   music_listens: 24 * 60 * 60 * 1000,
 };
@@ -47,12 +47,12 @@ config.updateService = {
 
 if (TEST) config.webServer.port = 5525;
 
-config.webServerURL = 'http://' + config.webServer.host + ':' + config.webServer.port;
+config.webServerURL = 'https://' + config.webServer.host + ':' + config.webServer.port;
 
 config.dbURL = 'mongodb://' + config.mongodb.host + ':' + config.mongodb.port +
 '/' + config.mongodb.db + '_' + config.currentEnv;
 
-config.market.url = 'http://' + config.market.host + '/api/dataplugs/' + config.market.id +
+config.market.url = 'https://' + config.market.host + '/api/dataplugs/' + config.market.id +
 '/connect';
 
 module.exports = config;
