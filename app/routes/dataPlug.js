@@ -2,11 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
+
+const config = require('../config');
 const errors = require('../errors');
+
 const db = require('../services/db.service');
 const hat = require('../services/hat.service');
 const market = require('../services/market.service');
-const config = require('../config');
+const update = require('../services/update.service');
 
 router.get('/', (req, res, next) => {
   return res.render('dataPlugLanding', { hatHost: req.query.hat });
@@ -53,11 +56,13 @@ router.post('/options', (req, res, next) => {
   var dataSources = req.body['data_source'];
 
   if (!dataSources) return res.redirect('/dataplug/options');
+  if (!Array.isArray(dataSources)) dataSources = [dataSources];
+
+  dataSources.push('profile_picture');
 
   db.createDataSources(dataSources,
                        'facebook',
                        req.session.hatUrl,
-                       req.session.hatAccessToken,
                        req.session.sourceAccessToken,
                        (err, savedEntries) => {
     if (err) return next();
@@ -65,6 +70,7 @@ router.post('/options', (req, res, next) => {
       db.createUpdateJobs(savedEntries, (err, savedJobs) => {
         if (err) return next();
 
+        update.addInitJobs(savedEntries, req.session.hatAccessToken);
         return res.render('confirmation');
       });
 

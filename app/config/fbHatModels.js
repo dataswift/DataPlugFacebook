@@ -129,7 +129,7 @@ var hatDataSourceConfig = {
       }
     ]
   },
-  profilePicture: {
+  profile_picture: {
     name: "profile_picture",
     source: "facebook",
     fields: [
@@ -139,6 +139,44 @@ var hatDataSourceConfig = {
       { name: "url" }
     ],
     subTables: []
+  },
+  music_listens: {
+    name: 'music_listens',
+    source: 'facebook',
+    fields: [
+      { name: "id" },
+      { name: "type" },
+      { name: "start_time" },
+      { name: "end_time" }
+    ],
+    subTables: [{
+      name: 'data',
+      source: 'facebook',
+      fields: [],
+      subTables: [
+        {
+          name: 'song',
+          source: 'facebook',
+          fields: [
+            { name: "id" },
+            { name: "title" },
+            { name: "type" },
+            { name: "url" }
+          ],
+          subTables: []
+        },
+        {
+          name: 'playlist',
+          source: 'facebook',
+          fields: [
+            { name: "id" },
+            { name: "title" },
+            { name: "type" },
+            { name: "url" }
+          ]
+        }
+      ]
+    }]
   }
 }
 

@@ -1,3 +1,5 @@
+'use strict';
+
 const request = require('request');
 const qs = require('qs');
 const _ = require('lodash');
@@ -26,13 +28,21 @@ exports.exchangeCodeForToken = (code, callback) => {
 };
 
 exports.getGraphNode = (node, accessToken, lastUpdated, callback) => {
-  const fbUrl = fbReqGenerator.getRequestUrl(node, accessToken, lastUpdated)
+  let fbUrl;
+  if (node === 'profile_picture') {
+    fbUrl = fbReqGenerator.getProfilePictureUrl(accessToken);
+  } else if (node === 'music_listens') {
+    fbUrl = fbReqGenerator.getBaseUrl(accessToken);
+  } else {
+    fbUrl = fbReqGenerator.getRequestUrl(node, accessToken, lastUpdated);
+  }
 
   request.get({ url: fbUrl, json: true }, (err, res, body) => {
     if (err) return callback(err);
 
-    const fbRecords = body.data ? body.data : [body];
+    const data = body.data ? body.data : body;
+    const dataArray = Array.isArray(data) ? data : [data];
 
-    return callback(null, fbRecords);
+    return callback(null, dataArray);
   });
 };

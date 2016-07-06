@@ -1,3 +1,5 @@
+'use strict';
+
 const hat = require('hat-node-sdk');
 const async = require('async');
 const _ = require('lodash');
@@ -12,7 +14,7 @@ var internals = {};
 
 exports.getAccessToken = (hatHost, callback) => {
   const reqOptions = {
-    url: 'http://' + hatHost + '/users/access_token',
+    url: 'https://' + hatHost + '/users/access_token',
     headers: {
       "Accept": "application/json",
       "Content-Type": "application/json"
@@ -36,47 +38,66 @@ exports.updateDataSource = (dataSource, callback) => {
     return callback(new Error('Updated cancelled. Inconsistent database record'));
   }
 
-  const procedure = [
-    async.apply(fb.getGraphNode,
-                dataSource.name,
-                dataSource.sourceAccessToken,
-                dataSource.latestRecordDate),
-    async.apply(internals.asyncTranformObjToHat,
-                dataSource.hatIdMapping),
-    async.apply(internals.createHatRecords,
-                dataSource.hatHost,
-                dataSource.hatAccessToken)
-  ];
+  exports.getAccessToken(dataSource.hatHost, (err, hatAccessToken) => {
+    if (err) return callback(err);
 
-  async.waterfall(procedure, (err, records) => {
-    if (err) {
-      console.log('There has been a problem updating ' + dataSource.hatHost + ' at ' + Date.now());
-      return callback(err);
-    } else {
-      return callback(null);
-    }
+    const procedure = [
+      async.apply(fb.getGraphNode,
+                  dataSource.name,
+                  dataSource.sourceAccessToken,
+                  dataSource.latestRecordDate),
+      async.apply(internals.asyncTranformObjToHat,
+                  dataSource.hatIdMapping),
+      async.apply(internals.createHatRecords,
+                  dataSource.hatHost,
+                  hatAccessToken)
+    ];
+
+    async.waterfall(procedure, (err, records) => {
+      if (err) {
+        console.log('There has been a problem updating ' + dataSource.hatHost + ' at ' + Date.now());
+        return callback(err);
+      } else {
+        console.log('Update successful with ', records);
+        return callback(null);
+      }
+    });
   });
 };
 
-exports.mapOrCreateModel = (dataSource, callback) => {
-  const client = new hat.Client('http://' + dataSource.hatHost, dataSource.hatAccessToken);
+exports.mapOrCreateModel = (dataSource, accessToken, callback) => {
+  const client = new hat.Client('https://' + dataSource.hatHost, accessToken);
 
   if (!dataSource.dataSourceModelId) {
-    client.createDataSourceModel(dataSource.dataSourceModel, (err, createdModel) => {
-      if (err) return callback(err);
+    client.getDataSourceId(dataSource.name, dataSource.source, (err, model) => {
+      if (model && model.id) {
+        db.updateDataSource({ dataSourceModelId: model.id }, dataSource, (err, savedDataSource) => {
+          if (err) return callback(err);
 
-      db.updateDataSource({ dataSourceModelId: createdModel.id }, dataSource, (err, savedDataSource) => {
-        if (err) return callback(err);
-        exports.mapOrCreateModel(savedDataSource, callback);
-      });
+          return exports.mapOrCreateModel(savedDataSource, accessToken, callback);
+        });
+      } else {
+        client.createDataSourceModel(dataSource.dataSourceModel, (err, createdModel) => {
+          if (err) return callback(err);
+
+          db.updateDataSource({ dataSourceModelId: createdModel.id }, dataSource, (err, savedDataSource) => {
+            if (err) return callback(err);
+
+            return exports.mapOrCreateModel(savedDataSource, accessToken, callback);
+          });
+        });
+      }
     });
   } else if (!dataSource.hatIdMapping) {
     client.getDataSourceModel(dataSource.dataSourceModelId, (err, model) => {
+      if (err) return callback(err);
+
+      let hatIdMapping;
 
       try {
-        const hatIdMapping = hat.transform.mapDataSourceModelIds(model);
+        hatIdMapping = hat.transform.mapDataSourceModelIds(model);
       } catch (e) {
-        return callback(err);
+        return callback(e);
       }
 
       db.updateDataSource({ hatIdMapping: hatIdMapping }, dataSource, callback);
@@ -96,6 +117,6 @@ internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {
 };
 
 internals.createHatRecords = (hatHost, hatAccessToken, records, callback) => {
-  var client = new hat.Client('http://' + hatHost, hatAccessToken);
+  var client = new hat.Client('https://' + hatHost, hatAccessToken);
   client.createMultipleRecords(records, callback);
 };

@@ -129,5 +129,23 @@ body :-ms-input-placeholder {
   font-weight: bold;
 }
 
+input[type='checkbox'].pseudo-checkbox + label:before,
+input[type='checkbox'].pseudo-checkbox + label:after{
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
 
+input[type='checkbox'].pseudo-checkbox + label:before {
+  content: "\e157";
+}
 
+input[type='checkbox']:checked.pseudo-checkbox + label:before {
+  content: "\e067";
+}
