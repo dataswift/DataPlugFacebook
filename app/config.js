@@ -47,7 +47,7 @@ config.updateService = {
 
 if (TEST) config.webServer.port = 5525;
 
-config.webServerURL = 'https://' + config.webServer.host + ':' + config.webServer.port;
+config.webServerURL = 'https://' + config.webServer.host;
 
 config.dbURL = 'mongodb://' + config.mongodb.host + ':' + config.mongodb.port +
 '/' + config.mongodb.db + '_' + config.currentEnv;
