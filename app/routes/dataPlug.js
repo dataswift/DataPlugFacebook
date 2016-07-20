@@ -70,7 +70,7 @@ router.post('/options', (req, res, next) => {
       db.createUpdateJobs(savedEntries, (err, savedJobs) => {
         if (err) return next();
 
-        update.addInitJobs(savedEntries, req.session.hatAccessToken);
+        update.addInitJobs(savedEntries);
         return res.render('confirmation');
       });
 

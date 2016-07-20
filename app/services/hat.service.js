@@ -55,10 +55,10 @@ exports.updateDataSource = (dataSource, callback) => {
 
     async.waterfall(procedure, (err, records) => {
       if (err) {
-        console.log('There has been a problem updating ' + dataSource.hatHost + ' at ' + Date.now());
+        console.log(`[HAT service] There has been a problem updating ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost} at ${Date.now()}`);
         return callback(err);
       } else {
-        console.log('Update successful with ', records);
+        console.log(`[HAT service] Successfully added ${records.length ? records.length : JSON.stringify(records)} records to HAT.`);
         return callback(null);
       }
     });
