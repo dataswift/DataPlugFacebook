@@ -82,14 +82,17 @@ function work(item, cb)  {
         return cb(err);
       }
 
-      hat.updateDataSource(item.dataSource, (err) => {
+      hat.updateDataSource(item.dataSource, (err, lastUpdateTime) => {
         if (err) return cb(err);
 
-        const now = new Date();
-        const isSuccess = !err;
-        const nextRunAt = err ? new Date(now.getTime() + config.updateService.repeatInterval) : new Date(now.getTime() + item.updateInfo.repeatInterval);
+        db.updateDataSource({ lastUpdateTime: lastUpdateTime } , item.dataSource, (er) => {
 
-        db.updateCompleteJob(item.updateInfo, isSuccess, nextRunAt, err => cb(err));
+          const now = new Date();
+          const isSuccess = !err && !er;
+          const nextRunAt = err ? new Date(now.getTime() + config.updateService.repeatInterval) : new Date(now.getTime() + item.updateInfo.repeatInterval);
+
+          db.updateCompleteJob(item.updateInfo, isSuccess, nextRunAt, err => cb(err));
+        });
       });
     });
   } else if (item.task === 'CREATE_MODEL') {

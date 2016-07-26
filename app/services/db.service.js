@@ -24,7 +24,7 @@ exports.createDataSources = (names, source, hatUrl, sourceAT, callback) => {
       dataSourceModel: fbHatModels[name],
       dataSourceModelId: null,
       hatIdMapping: null,
-      latestRecordDate: '1'
+      lastUpdateTime: '1'
     };
   });
 

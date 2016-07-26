@@ -45,7 +45,7 @@ exports.updateDataSource = (dataSource, callback) => {
       async.apply(fb.getGraphNode,
                   dataSource.name,
                   dataSource.sourceAccessToken,
-                  dataSource.latestRecordDate),
+                  dataSource.lastUpdateTime),
       async.apply(internals.asyncTranformObjToHat,
                   dataSource.hatIdMapping),
       async.apply(internals.createHatRecords,
@@ -53,13 +53,15 @@ exports.updateDataSource = (dataSource, callback) => {
                   hatAccessToken)
     ];
 
+    let now = Math.floor(Date.now() / 1000);
+
     async.waterfall(procedure, (err, records) => {
       if (err) {
-        console.log(`[HAT service] There has been a problem updating ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost} at ${Date.now()}`);
+        console.log(`[HAT service] There has been a problem updating ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost} at ${new Date()}`);
         return callback(err);
       } else {
         console.log(`[HAT service] Successfully added ${records.length ? records.length : JSON.stringify(records)} records to HAT.`);
-        return callback(null);
+        return callback(null, now);
       }
     });
   });

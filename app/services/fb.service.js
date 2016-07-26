@@ -27,14 +27,14 @@ exports.exchangeCodeForToken = (code, callback) => {
   });
 };
 
-exports.getGraphNode = (node, accessToken, lastUpdated, callback) => {
+exports.getGraphNode = (node, accessToken, lastestUpdateTime, callback) => {
   let fbUrl;
   if (node === 'profile_picture') {
     fbUrl = fbReqGenerator.getProfilePictureUrl(accessToken);
   } else if (node === 'music_listens') {
-    fbUrl = fbReqGenerator.getBaseUrl(accessToken);
+    fbUrl = fbReqGenerator.getBaseUrl(accessToken, lastestUpdateTime);
   } else {
-    fbUrl = fbReqGenerator.getRequestUrl(node, accessToken, lastUpdated);
+    fbUrl = fbReqGenerator.getRequestUrl(node, accessToken, lastestUpdateTime);
   }
 
   request.get({ url: fbUrl, json: true }, (err, res, body) => {
