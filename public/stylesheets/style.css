@@ -1,76 +1,92 @@
-@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:100,200,300,500);
-
-* {
-  box-sizing: border-box;
-}
 body {
-  font-family: 'Source Sans Pro', sans-serif;
-  background-color: #eeeeee;
-  color: #eeeeee;
-  font-weight: 300;
+  font-family: 'Open Sans Condensed', sans-serif;
+  background-color: #262626;
+  color: #ffffff;
+  font-weight: 500;
 }
 body ::-webkit-input-placeholder {
   /* WebKit browsers */
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 300;
 }
 body :-moz-placeholder {
   /* Mozilla Firefox 4 to 18 */
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
   color: rgba(255, 255, 255, 0.8);
   opacity: 1;
   font-weight: 300;
 }
 body ::-moz-placeholder {
   /* Mozilla Firefox 19+ */
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
   color: rgba(255, 255, 255, 0.8);
   opacity: 1;
   font-weight: 300;
 }
 body :-ms-input-placeholder {
   /* Internet Explorer 10+ */
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans Condensed', sans-serif;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 300;
 }
 
+.navbar {
+  border-radius: 0;
+  background-color: #000000;
+  height: 6em;
+}
+
+.navbar-header {
+  margin-top: 1em;
+}
+
+.brand {
+  padding: 1em;
+  font-size: 2em;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.brand:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+
 .wrapper {
-  background: linear-gradient(#b62c4c, #c64237);
-  position: absolute;
-  top: 15%;
-  left: 10%;
-  width: 80%;
-  height: 70%;
-  overflow: hidden;
-  border-radius: 3px;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+.wrapper p {
+  margin-bottom: 1.5em;
+}
+
+.wrapper ul {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+}
+
+.wrapper ul li {
+  text-align: left;
+}
+
+.wrapper h2 {
+  margin-bottom: 1.5em;
+}
+
+.sync-options {
+  display: inline-block;
+  text-align: left;
 }
 
 .container {
-  max-width: 80%;
-  margin: 0 auto;
-  height: 90%;
-  text-align: center;
+  width: 70%;
 }
 
-.container h1 {
-  font-size: 3em;
-  font-weight: 100;
-  color: #eeeeee;
-  margin: 5% 0;
-}
-
-.container p.plug-info {
-  margin-bottom: 3%;
-}
-
-.form {
-  padding: 20px 0;
-  position: relative;
-}
-
-.form input {
+.container input[type='text'] {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -78,55 +94,51 @@ body :-ms-input-placeholder {
   border: 1px solid rgba(255, 255, 255, 0.3);
   background-color: rgba(255, 255, 255, 0.1);
   width: 100%;
-  border-radius: 3px;
+  border-radius: 0;
   padding: 10px 15px;
-  margin: 0 auto 4% auto;
+  margin-bottom: 1.5em;
+  margin-top: 1.5em;
   display: block;
   text-align: center;
-  font-size: 1em;
-  font-family: 'Source Sans Pro', sans-serif;
-  color: black;
+  font-size: 1.3em;
+  font-family: 'Open Sans Condensed', sans-serif;
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
   font-weight: 300;
 }
 
-.form input:hover {
+.container input:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-.form input:focus {
+.container input:focus {
+  color: black;
   background-color: white;
 }
 
-.plug-button-wrapper {
-  margin-top: 7%;
-}
-
-.container .actions {
-  margin: auto;
-  width: 30%;
-}
-
 .container .plug-button {
+  display: block;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 0;
   font-size: 1.25em;
-  font-weight: 200;
-  font-family: 'Source Sans Pro', sans-serif;
+  margin: 1em 0;
+  font-weight: 300;
+  font-family: 'Open Sans Condensed', sans-serif;
   cursor: pointer;
   color: white;
   text-decoration: none;
+  width: 100%;
+  color: #cccccc;
 }
 .container .plug-button:hover {
   background-color: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  font-weight: bold;
+  color: #ffffff;
 }
 
 input[type='checkbox'].pseudo-checkbox + label:before,
@@ -136,7 +148,7 @@ input[type='checkbox'].pseudo-checkbox + label:after{
     display: inline-block;
     font-family: 'Glyphicons Halflings';
     font-style: normal;
-    font-weight: 400;
+    font-weight: 100;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

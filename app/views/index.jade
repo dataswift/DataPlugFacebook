@@ -1,18 +1,15 @@
 extends layout
 
 block content
-  .wrapper
-    .container
-      h1 HAT Social Data Plug
-      p.plug-info A supplementary HAT tool giving you the power to synchronize Facebook data with your personal HAT. Give it a try and see your profile details, posts and events magically appear on your own HAT.
-      p.plug-info
-        span There is just few simple steps to get us going:
-        ol
-          li Authorise the Plug to login to your Facebook account
-          li Select the categories for synchronization
-          li See your data appear on the HAT
+  h2 HAT Social Data Plug
+  p.plug-info You can synchronize your Facebook data with your personal HAT and browse it on RUMPEL.
+  p.plug-info
+    span A few simple steps would get you going:
+    ul
+      li 1. Authorise the Plug to login to your Facebook account
+      li 2. Select the categories for synchronization between HAT and Facebook
+      li 3. See your data appear on RUMPEL
 
-      div.plug-button-wrapper
-        a.plug-button(href="/dataplug") Start Here
-      div.plug-button-wrapper
-        a.plug-button(href="http://www.hatdex.org") Learn more about your data
+  .container
+    a.plug-button(href="/dataplug") Start Here
+    a.plug-button(href="http://www.hatdex.org") Learn more about your data

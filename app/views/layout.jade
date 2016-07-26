@@ -2,8 +2,16 @@ doctype html
 html
   head
     title= title
+    link(rel="stylesheet", type="text/css", href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,300italic,700")
     link(rel='stylesheet', type="text/css", href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css')
 
     link(rel='stylesheet', type="text/css", href='/stylesheets/style.css')
   body
-    block content
+    .navbar
+      .container-fluid
+        .navbar-header
+          .navbar-brand
+            a.brand(href="/") Social Data Plug
+    .row
+      .wrapper.col-xs-10.col-xs-offset-1.col-sm-8.col-sm-offset-2.col-md-8.col-md-offset-2.col-lg-6.col-lg-offset-3
+        block content

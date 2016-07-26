@@ -1,14 +1,12 @@
 extends layout
 
 block content
-  .wrapper
-    .container
-      h1 HAT Details
-      p.plug-info Tell us more about where your HAT is and how can it be accessed.
+  h2 HAT Registration
+  p.plug-info Please enter your Personal HAT address (PHATA).
 
-      div.form
-        form(name="hat_details", method="post", action="/dataplug/hat")
-          <!-- span.label HAT URL Address -->
-          input(type="text", name="hat_url", placeholder="HAT URL Address", value=hatHost)
-          div.actions
-            input.plug-button(type="submit", value="Submit")
+  .container
+    form(name="hat_details", method="post", action="/dataplug/hat")
+      <!-- span.label HAT URL Address -->
+      input(type="text", name="hat_url", placeholder="Personal HAT Address", value=hatHost)
+      div.actions
+        input.plug-button(type="submit", value="Enable")

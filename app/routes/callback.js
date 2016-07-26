@@ -4,6 +4,7 @@ const fb = require('../services/fb.service');
 const errors = require('../errors');
 
 router.get('/authenticate', (req, res, next) => {
+  if (req.query.error === 'access_denied') return res.render('fbCancel');
   if (!req.query.code) return next();
 
   fb.exchangeCodeForToken(req.query.code, (err, sourceAccessToken) => {
