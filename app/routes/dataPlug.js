@@ -16,22 +16,32 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/hat', (req, res, next) => {
-  if (!req.body['hat_url']) return next();
+  if (!req.body['hat_url']) return res.render('dataPlugLanding', { hatHost: req.query.hat });
 
   req.session.hatUrl = req.body['hat_url'];
 
   market.connectHat(req.session.hatUrl, (err) => {
-
-    if (err) return next();
+    if (err) {
+      console.log('[ERROR]', err);
+      req.dataplug = { statusCode: '502' };
+      return next();
+    }
 
     hat.getAccessToken(req.session.hatUrl, (err, hatAccessToken) => {
-
-      if (err) return next();
+      if (err) {
+        console.log('[ERROR]', err);
+        req.dataplug = { statusCode: '401' };
+        return next();
+      }
 
       req.session.hatAccessToken = hatAccessToken;
 
       db.countDataSources(req.session.hatUrl, (err, count) => {
-        if (err) return next();
+        if (err) {
+          console.log('[ERROR]', err);
+          req.dataplug = { statusCode: '500' };
+          return next();
+        }
 
         if (count === 0) {
           return res.render('fbAuthoriseLanding', {
@@ -46,7 +56,7 @@ router.post('/hat', (req, res, next) => {
     });
   });
 
-}, errors.badRequest);
+}, errors.renderErrorPage);
 
 router.get('/options', (req, res, next) => {
   res.render('syncOptions');
@@ -65,16 +75,16 @@ router.post('/options', (req, res, next) => {
                        req.session.hatUrl,
                        req.session.sourceAccessToken,
                        (err, savedEntries) => {
-    if (err) return next();
+    if (err) { req.dataplug = { statusCode: '500' }; return next(); }
 
       db.createUpdateJobs(savedEntries, (err, savedJobs) => {
-        if (err) return next();
+        if (err) { req.dataplug = { statusCode: '500' }; return next(); }
 
         update.addInitJobs(savedEntries);
         return res.render('confirmation');
       });
 
-  }, errors.badRequest);
+  }, errors.renderErrorPage);
 
 });
 

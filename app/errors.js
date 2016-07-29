@@ -1,7 +1,26 @@
+'use strict';
+
+const HTTP_STATUS_CODES = {
+  '400': 'Bad Request',
+  '401': 'Unauthorized',
+  '404': 'Page Not Found',
+  '500': 'Internal Server Error',
+  '502': 'Bad Gateway',
+  '504': 'Gateway Timeout'
+};
+
 const errorHandlers = {
-  badRequest: (req, res, next) => {
-    var err = new Error('Bad Request');
-    err.status = 400;
+  renderErrorPage: function(req, res, next) {
+    if (req.dataplug && req.dataplug.statusCode) {
+      var err = new Error(HTTP_STATUS_CODES[req.dataplug.statusCode]);
+      err.status = req.dataplug.statusCode;
+    } else {
+      var err = new Error('Unknown Error');
+      err.status = 520;
+    }
+
+    console.log('[ERROR]', err);
+
     return res.render('error', { errors: err });
   },
 
@@ -12,7 +31,7 @@ const errorHandlers = {
   },
 
   catchAll: function(err, req, res, next) {
-    errorReport = {
+    let errorReport = {
       message: err.message,
       status: err.status || 500,
     }
