@@ -1,6 +1,6 @@
 {
-  "name": "hat-facebook-data-plug",
-  "version": "0.1.2",
+  "name": "hat-social-data-plug",
+  "version": "1.1.0",
   "private": false,
   "scripts": {
     "start": "node ./bin/www"
