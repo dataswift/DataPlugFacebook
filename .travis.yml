@@ -1,0 +1,16 @@
+sudo: required
+
+language: node_js
+
+services:
+  - docker
+
+script:
+  - docker build -t hubofallthings/facebook-dataplug .
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push hubofallthings/facebook-dataplug;
+    fi 
+
