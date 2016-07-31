@@ -22,14 +22,14 @@ router.post('/hat', (req, res, next) => {
 
   market.connectHat(req.session.hatUrl, (err) => {
     if (err) {
-      console.log('[ERROR]', err);
+      console.log(`[ERROR][${new Date()}]`, err);
       req.dataplug = { statusCode: '502' };
       return next();
     }
 
     hat.getAccessToken(req.session.hatUrl, (err, hatAccessToken) => {
       if (err) {
-        console.log('[ERROR]', err);
+        console.log(`[ERROR][${new Date()}]`, err);
         req.dataplug = { statusCode: '401' };
         return next();
       }
@@ -38,7 +38,7 @@ router.post('/hat', (req, res, next) => {
 
       db.countDataSources(req.session.hatUrl, (err, count) => {
         if (err) {
-          console.log('[ERROR]', err);
+          console.log(`[ERROR][${new Date()}]`, err);
           req.dataplug = { statusCode: '500' };
           return next();
         }

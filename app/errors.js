@@ -19,7 +19,7 @@ const errorHandlers = {
       err.status = 520;
     }
 
-    console.log('[ERROR]', err);
+    console.log(`[ERROR][${new Date()}]`, err);
 
     return res.render('error', { errors: err });
   },

@@ -11,9 +11,15 @@ let queue = async.queue(work, 1);
 let onQueueJobs = [];
 
 setInterval(() => {
-  console.log('[Update module] Checking database for tasks...');
+  console.log(`[Update module][${new Date()}] Checking database for tasks...`);
 
   db.findDueJobs(onQueueJobs, (err, results) => {
+    if (err) {
+      console.log(`[ERROR][Update module][${new Date()}] The has been an error when fetching tasks:`);
+      console.log(err);
+      return null;
+    }
+
     const updateTasks = results.reduce((memo, result) => {
       if (result.dataSource.dataSourceModelId && result.dataSource.hatIdMapping) {
         memo.push({ task: 'UPDATE_RECORDS', updateInfo: result, dataSource: result.dataSource });
@@ -24,38 +30,38 @@ setInterval(() => {
       return memo;
     }, []);
 
-    console.log(`[Update module] Successfully added ${updateTasks.length} update jobs to queue.`);
+    console.log(`[Update module][${new Date()}] Successfully added ${updateTasks.length} update jobs to queue.`);
     return internals.addNewJobs(updateTasks);
   });
 }, config.updateService.dbCheckInterval);
 
 exports.addInitJobs = (dataSources) => {
   for (let dataSource of dataSources) {
-    console.log(`[JOB][CREATE] Adding ${dataSource.source} ${dataSource.name} model for ${dataSource.hatHost}.`);
+    console.log(`[JOB][CREATE][${new Date()}] Adding ${dataSource.source} ${dataSource.name} model for ${dataSource.hatHost}.`);
 
     queue.unshift({ task: 'CREATE_MODEL', dataSource: dataSource }, (err) => {
     if (err) {
-        console.log(`[JOB][CREATE - ERROR] ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost}`);
+        console.log(`[JOB][CREATE - ERROR][${new Date()}] ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost}`);
         console.log('Following error occured: ', err);
       } else {
-        console.log(`[JOB][CREATE - DONE] ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost}`);
+        console.log(`[JOB][CREATE - DONE][${new Date()}] ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost}`);
       }
     });
 
     onQueueJobs.unshift(dataSource._id);
   }
 
-  console.log('[Update module] All tasks submitted to queue.');
+  console.log(`[Update module][${new Date()}] All tasks submitted to queue.`);
 };
 
 internals.addNewJobs = (jobs) => {
   async.eachSeries(jobs, (job, callback) => {
     queue.push(job, (err) => {
       if (err) {
-        console.log(`[JOB][${job.task === 'UPDATE_RECORDS' ? 'UPDATE' : 'CREATE'} - ERROR] ${job.dataSource.source} ${job.dataSource.name} update job for ${job.dataSource.hatHost}.`);
+        console.log(`[JOB][${job.task === 'UPDATE_RECORDS' ? 'UPDATE' : 'CREATE'} - ERROR][${new Date()}] ${job.dataSource.source} ${job.dataSource.name} update job for ${job.dataSource.hatHost}.`);
         console.log('Following error occured: ', err);
       } else {
-        console.log(`[JOB][${job.task === 'UPDATE_RECORDS' ? 'UPDATE' : 'CREATE'} - DONE] ${job.dataSource.source} ${job.dataSource.name} for ${job.dataSource.hatHost}.`);
+        console.log(`[JOB][${job.task === 'UPDATE_RECORDS' ? 'UPDATE' : 'CREATE'} - DONE][${new Date()}] ${job.dataSource.source} ${job.dataSource.name} for ${job.dataSource.hatHost}.`);
       }
 
       onQueueJobs.shift();
@@ -69,7 +75,7 @@ internals.addNewJobs = (jobs) => {
 
     return callback();
   }, () => {
-    console.log('[Update module] All tasks submitted to queue.');
+    console.log(`[Update module][${new Date()}] All tasks submitted to queue.`);
   });
 };
 
@@ -108,7 +114,7 @@ function work(item, cb)  {
     }, 400);
 
   } else {
-    console.log('[Update module] Task description could not be parsed.');
+    console.log(`[ERROR][Update module][${new Date()}] Task description could not be parsed.`);
     cb();
   }
 };

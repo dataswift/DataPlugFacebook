@@ -6,7 +6,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+const mongoose = require('./config/db');
 
 var errors = require('./errors');
 var config = require('./config');
@@ -42,7 +42,7 @@ app.use('/facebook', callbackRoutes);
 
 // mongoose
 
-mongoose.connect(config.dbURL);
+mongoose();
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);
