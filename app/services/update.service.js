@@ -111,7 +111,7 @@ function work(item, cb)  {
           cb(err);
         });
       });
-    }, 400);
+    }, 200);
 
   } else {
     console.log(`[ERROR][Update module][${new Date()}] Task description could not be parsed.`);

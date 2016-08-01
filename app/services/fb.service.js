@@ -43,6 +43,11 @@ exports.getGraphNode = (node, accessToken, lastestUpdateTime, callback) => {
     const data = body.data ? body.data : body;
     const dataArray = Array.isArray(data) ? data : [data];
 
+    if (dataArray.length < 1) {
+      console.log('[FB] No data to process.')
+      return callback(new Error('No data to process'));
+    }
+
     return callback(null, dataArray);
   });
 };

@@ -28,6 +28,7 @@ exports.getAccessToken = (hatHost, callback) => {
 
   request.get(reqOptions, (err, res, body) => {
     if (err) return callback(err);
+    if (res.statusCode === 401 || res.statusCode === 500) return callback(body);
 
     return callback(null, body.accessToken);
   });
@@ -56,7 +57,10 @@ exports.updateDataSource = (dataSource, callback) => {
     let now = Math.floor(Date.now() / 1000);
 
     async.waterfall(procedure, (err, records) => {
-      if (err) {
+      if (err && err.message === 'No data to process') {
+        console.log(`[HAT service] Nothing to do.`);
+        return callback(null, now);
+      } else if (err) {
         console.log(`[HAT service] There has been a problem updating ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost} at ${new Date()}`);
         return callback(err);
       } else {
