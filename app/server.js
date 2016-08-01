@@ -42,7 +42,7 @@ app.use('/facebook', callbackRoutes);
 
 // mongoose
 
-mongoose();
+var db = mongoose();
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);

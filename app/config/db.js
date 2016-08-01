@@ -9,7 +9,7 @@ const options = {
 };
 
 module.exports = function() {
-  let db = mongoose.connect(config.dbURL, options);
+  var db = mongoose.connect(config.dbURL, options);
 
   mongoose.connection.on('connected', () => {
     console.log(`[DB][${new Date()}] Server successfully connected to MongoDB`);
