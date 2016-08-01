@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h2 Login to Facebook
+  p.plug-info You will be now redirected to Facebook's website to log in to your account.
+    .container
+      a.plug-button(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Log In to Facebook

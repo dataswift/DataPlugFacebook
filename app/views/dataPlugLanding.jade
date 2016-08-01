@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h2 HAT Registration
+  p.plug-info Please enter your Personal HAT address (PHATA).
+
+  .container
+    form(name="hat_details", method="post", action="/dataplug/hat")
+      <!-- span.label HAT URL Address -->
+      input(type="text", name="hat_url", placeholder="Personal HAT Address", value=hatHost)
+      div.actions
+        input.plug-button(type="submit", value="Enable")

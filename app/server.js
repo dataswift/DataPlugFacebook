@@ -1,16 +1,24 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+const mongoose = require('./config/db');
 
 var errors = require('./errors');
 var config = require('./config');
-var routes = require('./routes');
+
+const indexRoutes = require('./routes/index');
+const dataPlugRoutes = require('./routes/dataPlug');
+const callbackRoutes = require('./routes/callback');
+const updateSvc = require('./services/update.service');
 
 var app = express();
+
+app.disable('etag');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,13 +34,15 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
-app.use('/', routes);
+app.use('/', indexRoutes);
+app.use('/dataplug', dataPlugRoutes);
+app.use('/facebook', callbackRoutes);
 
 // mongoose
 
-mongoose.connect(config.dbURL);
+mongoose();
 
 // catch 404 and forward to error handler
 app.use(errors.notFound);

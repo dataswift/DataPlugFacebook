@@ -1,52 +1,67 @@
 ![Hub of All things](http://hubofallthings.com/wp-content/uploads/banner21.png)
 
-# HAT Sync Tools
+# Social Data Plug for HAT
 
-### How to use it
+Social Data Plug service allows HAT users to copy their personal data from Facebook to the HAT. Once the service is set up by the user it will monitor the associated Facebook account for updates and periodically synchronise the data.
 
-1. Install npm modules, make sure MongoDB is running and start node server from project root directory.
+## Default settings
+
+Currently the data plug supports synchronisation of the following data type with given default intervals:
+
+- Timeline posts (synced every 2 hours)
+- Facebook events (synced every 24 hours)
+- Music listens (every 24 hours)
+- Facebook profile (once in a week)
+- Facebook profile picture (synced on demand)
+
+Support for other data types and features will be added in the near future.
+
+## Main features
+
+- Minimalistic user interface with step-by-step setup process
+- Integration with MarketSquare's and Facebook's authorisation processes
+- Data synchronisation scheduler
+- Build using Node (v4 LTS), MongoDB and Express framework
+
+## Getting started
+
+### Setting up environment variables
+
+Data plug uses environment variables to configure security-sensitive parameters. Please have the following variables set up before starting the node process.
+
+- MARKET_ID - plug's unique ID to login with MarketSquare (obtained from MS)
+- MARKET\_ACCESS\_TOKEN - access token associated with the given MARKET_ID
+- MARKET_DOMAIN - domain name used by the MarketSquare (currently marketsquare.hubofallthings.net)
+- HAT_USER - username to login with HATs (configured *via* MarketSquare)
+- HAT_PASSWORD - password associated with the current HAT username (configured *via* MarketSquare)
+- FB\_APP\_ID - Facebook application's ID (needs to be set up separately, more information can be found [here]())
+- FB\_APP\_SECRET - application secret associated with the current Facebook app
+- NODE_ENV - can be set to either 'production' or 'development'
+- SECURE - if set to 'true' will switch to https protocol for all communications
+- HOST - webserver's domain name, defaults to 'localhost' if not set
+- PORT - webserver's port, defaults to 3000 if not set
+- MONGODB_HOST - Mongo database's domain name, defaults to 'localhost' if not set
+- MONGODB_PORT - Monog database's port, defaults to 27017 if not set
+
+### Configuration files
+
+Amendments to the default synchronisation scheduler, data types and data fields being synchronised can be made in the app/config.js file and app/config/ folder.
+
+### Starting the server
+
+Clone the repository, install required npm modules and start the node server from project root directory. Make sure that MongoDB instance is running and environment variables are set up correctly.
 
   ```bash
+  git clone https://github.com/Hub-of-all-Things/DataPlugFacebook
+  cd DataPlugFacebook/
   npm install
-  mongod
   node bin/www
   ```
 
-2. Visit homepage passing in HAT access token as query parameter.
-
-  ```
-  http://localhost:3000?hat\_token=$HAT\_ACCESS_TOKEN
-  ```
-
-3. Click "Authorize with Facebook" to grant access rights and generate user access token.
-
-4. Initialize Data Source Model for a particular none by visiting:
-
-  ```
-  http://localhost:3000/facebook/$NODE\_NAME/init?hat\_token=$HAT\_ACCESS_TOKEN
-  ```
-
-5. Data synchronisation is initialised by visiting update endpoints for a particular node with HAT access token as query parameter.
-
-  ```
-  http://localhost:3000/facebook/$NODE\_NAME/update?hat\_token=$HAT\_ACCESS_TOKEN
-  ```
-
-
-Currently supported node names:
-
-* profile
-* posts
-* events
-
-### To Do
-
-1. FB time filter to effectively handle updates after initial synchronisation
-2. Scheduler allowing updates to run in a background
-3. Improve error handling
-4. Support Graph Access Token renewal
-6. Unit tests
+Now the homepage can be accessed at http://localhost:3000 (assuming the default setup).
 
 ## License
 
-This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License. To view a copy of this license, visit [http://creativecommons.org/licenses/by-nc-nd/4.0/](http://creativecommons.org/licenses/by-nc-nd/4.0/) or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+This work is licensed under the GNU Affero General Public License. Please read the LICENSE file for further details.
+
+## Happy data syncing!

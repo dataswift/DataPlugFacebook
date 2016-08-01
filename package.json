@@ -1,17 +1,17 @@
 {
-  "name": "facebook_hat_data_plug",
-  "version": "0.0.2",
+  "name": "hat-social-data-plug",
+  "version": "1.1.0",
   "private": false,
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "agenda": "^0.7.2",
-    "async": "^1.5.0",
+    "async": "^1.5.2",
     "body-parser": "~1.13.2",
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "express-session": "^1.12.1",
+    "hat-node-sdk": "https://github.com/Hub-of-all-Things/hat-node-sdk",
     "jade": "~1.11.0",
     "lodash": "^3.10.1",
     "mongoose": "^4.2.2",

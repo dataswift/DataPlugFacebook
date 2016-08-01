@@ -1,9 +1,15 @@
 extends layout
 
 block content
-  h1= title
-  p= stepInformation
+  h2 HAT Social Data Plug
+  p.plug-info You can synchronize your Facebook data with your personal HAT and browse it on RUMPEL.
+  p.plug-info
+    span A few simple steps would get you going:
+    ul
+      li 1. Authorise the Plug to login to your Facebook account
+      li 2. Select the categories for synchronization between HAT and Facebook
+      li 3. See your data appear on RUMPEL
 
-  a(href="https://www.facebook.com/dialog/oauth?client_id=" + facebookAppId + "&redirect_uri=" + redirectUri + "&scope=" + fbAccessScope) Sync with Facebook
-  br
-  hr
+  .container
+    a.plug-button(href="/dataplug") Start Here
+    a.plug-button(href="http://www.hatdex.org") Learn more about your data

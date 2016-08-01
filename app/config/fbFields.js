@@ -32,10 +32,19 @@ var facebookQueryFields_v_2_5 = {
     used: ['id', 'name', 'description', 'start_time', 'end_time', 'rsvp_status', 'place']
   },
 
+  getBaseUrl: function(graphAccessToken, lastUpdate) {
+    var graphRequestUrl = 'https://graph.facebook.com/me/music.listens?access_token='+graphAccessToken;
+
+    if (lastUpdate) {
+      graphRequestUrl += '&since='+lastUpdate;
+    }
+
+    return graphRequestUrl;
+  },
+
   getProfilePictureUrl: function(graphAccessToken) {
-    var graphRequestUrl = 'https://graph.facebook.com/me/picture/';
+    var graphRequestUrl = 'https://graph.facebook.com/me/picture';
     graphRequestUrl += '?access_token='+graphAccessToken+'&height=320&width=320&redirect=false';
-    console.log('URL', graphRequestUrl);
     return graphRequestUrl;
   },
 
