@@ -23,7 +23,7 @@ const errorHandlers = {
 
     console.log(`[ERROR][${new Date()}]`, err);
 
-    return res.marko(errorPage, { errors: err });
+    return res.marko(errorPage, { errors: err, hat: req.session.hat });
   },
 
   notFound: function(req, res, next) {

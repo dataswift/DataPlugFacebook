@@ -5,6 +5,7 @@ const async = require('async');
 const _ = require('lodash');
 const request = require('request');
 const qs = require('qs');
+const jwt = require('jsonwebtoken');
 
 const db = require('../services/db.service');
 const fb = require('../services/fb.service');
@@ -12,9 +13,31 @@ const config = require('../config');
 
 var internals = {};
 
-exports.getAccessToken = (hatHost, callback) => {
+exports.verifyToken = (token, callback) => {
+  const decodedToken = jwt.decode(token);
+
+  if (!decodedToken) {
+    return callback(new Error('Ivalid JWT token.'));
+  } else if (!decodedToken.iss) {
+    return callback(new Error('JWT token does not contain valid "iss" field'));
+  }
+
+  const reqUrl = `${config.protocol}://${decodedToken.iss}/publickey`;
+
+  request.get(reqUrl, (err, res, publicKey) => {
+    if (err) return callback(err);
+
+    jwt.verify(token, publicKey, { algorithms: ['RS256'], ignoreExpiration: false }, (err, payload) => {
+      if (err) return callback(null, false);
+
+      return callback(null, true, payload.iss);
+    });
+  });
+};
+
+exports.getAccessToken = (hatDomain, callback) => {
   const reqOptions = {
-    url: config.protocol + '://' + hatHost + '/users/access_token',
+    url: `${config.protocol}://${hatDomain}/users/access_token`,
     headers: {
       "Accept": "application/json",
       "Content-Type": "application/json"

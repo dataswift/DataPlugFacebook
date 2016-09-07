@@ -1,11 +1,11 @@
-<layout-use("./layout.marko")>
+<layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
   <layout-put into="container">
     <h2>Data Plug configuration</h2>
 
     <p class="plug-info">Please select categories to be synchronized between HAT and Facebook</p>
     <p class="plug-info">Note: Your profile picture will be synchronized with HAT automatically</p>
 
-    <form method="post" name="dataCategories" action="/dataplug/options">
+    <form method="post" id="data-categories" name="dataCategories" action="/dataplug/options">
       <div class="sync-options">
         <div class="check-group">
           <input type="checkbox" id="chb-posts" class="pseudo-checkbox sr-only"
@@ -30,7 +30,7 @@
       </div>
 
       <div class="form-group actions container">
-        <button class="plug-button" type="submit">Synchronise Facebook data</button>
+        <button class="plug-button" type="submit">Start synchronising Facebook data</button>
       </div>
 
     </form>

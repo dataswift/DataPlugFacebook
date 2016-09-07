@@ -13,6 +13,7 @@
     "express-session": "^1.14.1",
     "hat-node-sdk": "https://github.com/Hub-of-all-Things/hat-node-sdk",
     "jade": "~1.11.0",
+    "jsonwebtoken": "^7.1.9",
     "lodash": "^4.15.0",
     "marko": "^3.10.0",
     "mongoose": "^4.6.0",

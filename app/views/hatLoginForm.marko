@@ -1,8 +1,8 @@
-<layout-use("./layout.marko")>
+<layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
   <layout-put into="container">
     <h2>HAT Login</h2>
 
-    <p class="plug-info">Please enter your Personal HAT Address (PHATA).</p>
+    <p class="plug-info">Please enter your Personal HAT Address (PHATA). Afterwards, you will be redirected to the HAT to log in with your password. If you have entered your HAT password recently, the process will be automatic.</p>
 
     <form class="container" id="hat-login" name="hatLogin" method="post" action="/dataplug/hat">
       <div class="form-group">
@@ -14,5 +14,16 @@
         <button type="submit" class="plug-button">Login with HAT</button>
       </div>
     </form>
+
+    <script>
+      window.onload = function() {
+        document.getElementById("hat-login").onsubmit = function() {
+          var hatDomain = document.getElementById("hat-domain").value;
+          window.location.href = "https://" + hatDomain + "/hatlogin?name=Facebook&" +
+            "redirect=https://social-plug.hubofallthings.com/hat/authenticate";
+          return false;
+        }
+      }
+    </script>
   </layout-put>
 </layout-use>

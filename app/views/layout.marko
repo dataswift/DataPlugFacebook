@@ -17,6 +17,14 @@
             <a href="/" class="brand">Social Data Plug</a>
           </div>
         </div>
+
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="user-nav"><p>${data.hatDomain}</p></li>
+            <li class="user-nav" if(data.authenticated === false)><a href="/hat/login">Login</a></li>
+            <li class="user-nav" if(data.authenticated === true)><a href="/hat/logout">Logout</a></li>
+          </ul>
+        </div>
       </div>
     </div>
 

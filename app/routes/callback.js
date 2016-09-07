@@ -7,7 +7,7 @@ const facebookRejectPage = require('../views/facebookRejectPage.marko');
 
 router.get('/authenticate', (req, res, next) => {
   if (req.query.error === 'access_denied') {
-    return res.marko(facebookRejectPage);
+    return res.marko(facebookRejectPage, { hat: req.session.hat });
   }
 
   if (!req.query.code) {
@@ -23,7 +23,9 @@ router.get('/authenticate', (req, res, next) => {
       return next();
     }
 
-    req.session.sourceAccessToken = sourceAccessToken;
+    req.session.fb = {
+      accessToken: sourceAccessToken
+    };
 
     req.session.save((err) => {
       res.redirect('/dataplug/options');

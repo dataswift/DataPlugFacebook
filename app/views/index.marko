@@ -1,4 +1,4 @@
-<layout-use("./layout.marko")>
+<layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
   <layout-put into="container">
     <h2>HAT Social Data Plug</h2>
     <p class="plug-info">
@@ -15,7 +15,7 @@
     </p>
 
     <div class="container">
-      <a href="/dataplug" class="plug-button">Start Here</a>
+      <a href="/hat/login" class="plug-button">Start Here</a>
       <a href="http://www.hatdex.org" class="plug-button">Learn more about your data</a>
     </div>
   </layout-put>

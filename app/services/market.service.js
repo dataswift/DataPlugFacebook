@@ -2,10 +2,10 @@ const request = require('request');
 const qs = require('qs');
 const config = require('../config');
 
-exports.connectHat = (hatUrl, callback) => {
+exports.connectHat = (hatDomain, callback) => {
   const registrationReqOptions = {
     url: config.market.url,
-    qs: { hat: hatUrl },
+    qs: { hat: hatDomain },
     headers: { 'X-Auth-Token': config.market.accessToken }
   };
 

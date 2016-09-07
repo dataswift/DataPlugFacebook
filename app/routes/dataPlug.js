@@ -5,53 +5,38 @@ const router = express.Router();
 
 const config = require('../config');
 const errors = require('../errors');
+const helpers = require('../helpers');
 
 const db = require('../services/db.service');
 const hat = require('../services/hat.service');
 const market = require('../services/market.service');
 const update = require('../services/update.service');
 
-const hatLoginForm = require('../views/hatLoginForm.marko');
 const facebookLoginForm = require('../views/facebookLoginForm.marko');
 const plugConfigurationPage = require('../views/plugConfiguration.marko');
 const accountStatsPage = require('../views/accountStats.marko');
 const setupConfirmPage = require('../views/setupConfirmPage.marko');
 
-router.get('/', (req, res, next) => {
-  // TODO: check HAT domain with regex
-  return res.marko(hatLoginForm, { hatDomain: req.query['hat'] || null });
-});
+router.use(helpers.authMiddleware);
 
-router.get('/hat', (req, res, next) => {
-  return res.marko(facebookLoginForm, {
-    fbAppId: config.fb.appID,
-    fbAccessScope: config.fb.accessScope,
-    redirectUri: config.webServerURL + '/facebook/authenticate'
-  });
-});
-
-router.post('/hat', (req, res, next) => {
-  if (!req.body['hatDomain']) return res.marko(hatLoginForm, { hatDomain: req.query.hat });
-
-  req.session.hatUrl = req.body['hatDomain'];
-
-  market.connectHat(req.session.hatUrl, (err) => {
+router.get('/main', (req, res, next) => {
+  market.connectHat(req.session.hat.domain, (err) => {
     if (err) {
       console.log(`[ERROR][${new Date()}]`, err);
       req.dataplug = { statusCode: '502' };
       return next();
     }
 
-    hat.getAccessToken(req.session.hatUrl, (err, hatAccessToken) => {
+    hat.getAccessToken(req.session.hat.domain, (err, hatAccessToken) => {
       if (err) {
         console.log(`[ERROR][${new Date()}]`, err);
         req.dataplug = { statusCode: '401' };
         return next();
       }
 
-      req.session.hatAccessToken = hatAccessToken;
+      req.session.hat.accessToken = hatAccessToken;
 
-      db.countDataSources(req.session.hatUrl, (err, count) => {
+      db.countDataSources(req.session.hat.domain, (err, count) => {
         if (err) {
           console.log(`[ERROR][${new Date()}]`, err);
           req.dataplug = { statusCode: '500' };
@@ -60,12 +45,13 @@ router.post('/hat', (req, res, next) => {
 
         if (count === 0) {
           return res.marko(facebookLoginForm, {
+            hat: req.session.hat,
             fbAppId: config.fb.appID,
             fbAccessScope: config.fb.accessScope,
             redirectUri: config.webServerURL + '/facebook/authenticate'
           });
         } else {
-          return res.marko(accountStatsPage);
+          return res.marko(accountStatsPage, { hat: req.session.hat });
         }
       });
     });
@@ -74,7 +60,9 @@ router.post('/hat', (req, res, next) => {
 }, errors.renderErrorPage);
 
 router.get('/options', (req, res, next) => {
-  return res.marko(plugConfigurationPage);
+  return res.marko(plugConfigurationPage, {
+    hat: req.session.hat
+  });
 });
 
 router.post('/options', (req, res, next) => {
@@ -87,22 +75,28 @@ router.post('/options', (req, res, next) => {
 
   db.createDataSources(dataSources,
                        'facebook',
-                       req.session.hatUrl,
-                       req.session.sourceAccessToken,
+                       req.session.hat.domain,
+                       req.session.fb.accessToken,
                        (err, savedEntries) => {
-    if (err) { req.dataplug = { statusCode: '500' }; return next(); }
+    if (err) {
+      req.dataplug = { statusCode: '500' };
+      return next();
+    }
 
       db.createUpdateJobs(savedEntries, (err, savedJobs) => {
-        if (err) { req.dataplug = { statusCode: '500' }; return next(); }
+        if (err) {
+          req.dataplug = { statusCode: '500' };
+          return next();
+        }
 
         update.addInitJobs(savedEntries);
         return res.marko(setupConfirmPage, {
+          hat: req.session.hat,
           rumpelLink: 'https://rumpel.hubofallthings.com/'
         });
       });
+  });
 
-  }, errors.renderErrorPage);
-
-});
+}, errors.renderErrorPage);
 
 module.exports = router;

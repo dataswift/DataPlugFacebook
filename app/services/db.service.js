@@ -5,19 +5,19 @@ const UpdateJob = require('../models/UpdateJob.model');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
 
-exports.countDataSources = (hatUrl, callback) => {
-  return HatDataSource.count({ hatHost: hatUrl }, (err, count) => {
+exports.countDataSources = (hatDomain, callback) => {
+  return HatDataSource.count({ hatHost: hatDomain }, (err, count) => {
     if (err) return callback(err);
     return callback(null, count);
   });
 };
 
-exports.createDataSources = (names, source, hatUrl, sourceAT, callback) => {
+exports.createDataSources = (names, source, hatDomain, sourceAT, callback) => {
   if (typeof names === 'string') names = [names];
 
   const newDbEntries = names.map((name) => {
     return {
-      hatHost: hatUrl,
+      hatHost: hatDomain,
       name: name,
       source: source,
       sourceAccessToken: sourceAT,
