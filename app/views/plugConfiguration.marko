@@ -1,0 +1,38 @@
+<layout-use("./layout.marko")>
+  <layout-put into="container">
+    <h2>Data Plug configuration</h2>
+
+    <p class="plug-info">Please select categories to be synchronized between HAT and Facebook</p>
+    <p class="plug-info">Note: Your profile picture will be synchronized with HAT automatically</p>
+
+    <form method="post" name="dataCategories" action="/dataplug/options">
+      <div class="sync-options">
+        <div class="check-group">
+          <input type="checkbox" id="chb-posts" class="pseudo-checkbox sr-only"
+                 name="dataSource" value="posts" />
+          <label for="chb-posts" class="checkbox-label">&nbsp;&nbsp;Posts</label>
+        </div>
+        <div class="check-group">
+          <input type="checkbox" id="chb-events" class="pseudo-checkbox sr-only"
+                 name="dataSource" value="events" />
+          <label for="chb-events" class="checkbox-label">&nbsp;&nbsp;Events</label>
+        </div>
+        <div class="check-group">
+          <input type="checkbox" id="chb-profile" class="pseudo-checkbox sr-only"
+                 name="dataSource" value="profile" />
+          <label for="chb-profile" class="checkbox-label">&nbsp;&nbsp;Profile</label>
+        </div>
+        <div class="check-group">
+          <input type="checkbox" id="chb-music" class="pseudo-checkbox sr-only"
+                 name="dataSource" value="music_listens" />
+          <label for="chb-music" class="checkbox-label">&nbsp;&nbsp;Music Listens</label>
+        </div>
+      </div>
+
+      <div class="form-group actions container">
+        <button class="plug-button" type="submit">Synchronise Facebook data</button>
+      </div>
+
+    </form>
+  </layout-put>
+</layout-use>

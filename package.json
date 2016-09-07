@@ -6,24 +6,25 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "async": "^1.5.2",
-    "body-parser": "~1.13.2",
+    "async": "^2.0.1",
+    "body-parser": "~1.15.2",
     "debug": "~2.2.0",
-    "express": "~4.13.1",
-    "express-session": "^1.12.1",
+    "express": "~4.14.0",
+    "express-session": "^1.14.1",
     "hat-node-sdk": "https://github.com/Hub-of-all-Things/hat-node-sdk",
     "jade": "~1.11.0",
-    "lodash": "^3.10.1",
-    "mongoose": "^4.2.2",
-    "morgan": "~1.6.1",
-    "qs": "^6.0.1",
-    "request": "^2.65.0",
+    "lodash": "^4.15.0",
+    "marko": "^3.10.0",
+    "mongoose": "^4.6.0",
+    "morgan": "~1.7.0",
+    "qs": "^6.2.1",
+    "request": "^2.74.0",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "mocha": "^2.3.4",
-    "mockery": "^1.4.0",
-    "sinon": "^1.17.2"
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
+    "mockery": "^1.7.0",
+    "sinon": "^1.17.5"
   }
 }

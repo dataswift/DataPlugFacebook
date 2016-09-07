@@ -1,0 +1,18 @@
+<layout-use("./layout.marko")>
+  <layout-put into="container">
+    <h2>HAT Login</h2>
+
+    <p class="plug-info">Please enter your Personal HAT Address (PHATA).</p>
+
+    <form class="container" id="hat-login" name="hatLogin" method="post" action="/dataplug/hat">
+      <div class="form-group">
+        <label for="hat-domain">PHATA</label>
+        <input type="text" id="hat-domain" name="hatDomain" placeholder="hat.hubofallthings.net" value=data.hatDomain />
+      </div>
+
+      <div class="form-group actions">
+        <button type="submit" class="plug-button">Login with HAT</button>
+      </div>
+    </form>
+  </layout-put>
+</layout-use>

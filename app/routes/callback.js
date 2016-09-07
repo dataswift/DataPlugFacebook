@@ -3,8 +3,13 @@ const router = express.Router();
 const fb = require('../services/fb.service');
 const errors = require('../errors');
 
+const facebookRejectPage = require('../views/facebookRejectPage.marko');
+
 router.get('/authenticate', (req, res, next) => {
-  if (req.query.error === 'access_denied') return res.render('fbCancel');
+  if (req.query.error === 'access_denied') {
+    return res.marko(facebookRejectPage);
+  }
+
   if (!req.query.code) {
     console.log(`[ERROR][${new Date()}] Facebook redirected without the Code variable`);
     req.dataplug = { statusCode: '502' };

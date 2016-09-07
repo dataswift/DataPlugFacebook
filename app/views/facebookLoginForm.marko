@@ -1,0 +1,13 @@
+<layout-use("./layout.marko")>
+  <layout-put into="container">
+    <h2>Facebook Login</h2>
+
+    <p class="plug-info">After clicking the button you will be redirected to Facebook's website to log in to your account.</p>
+
+    <p class="plug-info">Note: if you have recently logged into Facebook recently, the process might be fully automatic.</p>
+
+    <div class="container">
+      <a href="https://www.facebook.com/dialog/oauth?client_id=${data.fbAppId}&redirect_uri=${data.redirectUri}&scope=${data.fbAccessScope}" class="plug-button">Login with Facebook</a>
+    </div>
+  </layout-put>
+</layout-use>

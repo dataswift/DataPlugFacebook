@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
+const indexPage = require('../views/index.marko');
+
 router.get('/', (req, res, next) => {
-  res.render('index');
+  return res.marko(indexPage);
 });
 
 module.exports = router;

@@ -11,14 +11,29 @@ const hat = require('../services/hat.service');
 const market = require('../services/market.service');
 const update = require('../services/update.service');
 
+const hatLoginForm = require('../views/hatLoginForm.marko');
+const facebookLoginForm = require('../views/facebookLoginForm.marko');
+const plugConfigurationPage = require('../views/plugConfiguration.marko');
+const accountStatsPage = require('../views/accountStats.marko');
+const setupConfirmPage = require('../views/setupConfirmPage.marko');
+
 router.get('/', (req, res, next) => {
-  return res.render('dataPlugLanding', { hatHost: req.query.hat });
+  // TODO: check HAT domain with regex
+  return res.marko(hatLoginForm, { hatDomain: req.query['hat'] || null });
+});
+
+router.get('/hat', (req, res, next) => {
+  return res.marko(facebookLoginForm, {
+    fbAppId: config.fb.appID,
+    fbAccessScope: config.fb.accessScope,
+    redirectUri: config.webServerURL + '/facebook/authenticate'
+  });
 });
 
 router.post('/hat', (req, res, next) => {
-  if (!req.body['hat_url']) return res.render('dataPlugLanding', { hatHost: req.query.hat });
+  if (!req.body['hatDomain']) return res.marko(hatLoginForm, { hatDomain: req.query.hat });
 
-  req.session.hatUrl = req.body['hat_url'];
+  req.session.hatUrl = req.body['hatDomain'];
 
   market.connectHat(req.session.hatUrl, (err) => {
     if (err) {
@@ -44,13 +59,13 @@ router.post('/hat', (req, res, next) => {
         }
 
         if (count === 0) {
-          return res.render('fbAuthoriseLanding', {
-            facebookAppId: config.fb.appID,
+          return res.marko(facebookLoginForm, {
+            fbAppId: config.fb.appID,
             fbAccessScope: config.fb.accessScope,
-            redirectUri: config.webServerURL + '/facebook/authenticate',
+            redirectUri: config.webServerURL + '/facebook/authenticate'
           });
         } else {
-          return res.render('dataPlugStats');
+          return res.marko(accountStatsPage);
         }
       });
     });
@@ -59,11 +74,11 @@ router.post('/hat', (req, res, next) => {
 }, errors.renderErrorPage);
 
 router.get('/options', (req, res, next) => {
-  res.render('syncOptions');
+  return res.marko(plugConfigurationPage);
 });
 
 router.post('/options', (req, res, next) => {
-  var dataSources = req.body['data_source'];
+  var dataSources = req.body['dataSource'];
 
   if (!dataSources) return res.redirect('/dataplug/options');
   if (!Array.isArray(dataSources)) dataSources = [dataSources];
@@ -81,7 +96,9 @@ router.post('/options', (req, res, next) => {
         if (err) { req.dataplug = { statusCode: '500' }; return next(); }
 
         update.addInitJobs(savedEntries);
-        return res.render('confirmation');
+        return res.marko(setupConfirmPage, {
+          rumpelLink: 'https://rumpel.hubofallthings.com/'
+        });
       });
 
   }, errors.renderErrorPage);

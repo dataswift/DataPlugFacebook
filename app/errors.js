@@ -1,5 +1,7 @@
 'use strict';
 
+const errorPage = require('./views/errorPage.marko');
+
 const HTTP_STATUS_CODES = {
   '400': 'Bad Request',
   '401': 'Unauthorized',
@@ -21,7 +23,7 @@ const errorHandlers = {
 
     console.log(`[ERROR][${new Date()}]`, err);
 
-    return res.render('error', { errors: err });
+    return res.marko(errorPage, { errors: err });
   },
 
   notFound: function(req, res, next) {

@@ -1,22 +1,21 @@
 'use strict';
 
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var session = require('express-session');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+require('marko/express');
+require('marko/node-require').install();
+
 const mongoose = require('./config/db');
+const errors = require('./errors');
+const config = require('./config');
 
-var errors = require('./errors');
-var config = require('./config');
-
-const indexRoutes = require('./routes/index');
-const dataPlugRoutes = require('./routes/dataPlug');
-const callbackRoutes = require('./routes/callback');
 const updateSvc = require('./services/update.service');
 
-var app = express();
+const app = express();
 
 app.disable('etag');
 
@@ -35,6 +34,11 @@ app.use(session({
   saveUninitialized: true
 }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+/* App routes */
+const indexRoutes = require('./routes/index');
+const dataPlugRoutes = require('./routes/dataPlug');
+const callbackRoutes = require('./routes/callback');
 
 app.use('/', indexRoutes);
 app.use('/dataplug', dataPlugRoutes);
