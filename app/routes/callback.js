@@ -55,6 +55,8 @@ router.get('/deauthorize', (req, res, next) => {
         return next();
       }
 
+      req.session.activeDataGroups = [];
+
       return res.marko(deauthoriseConfirmPage, {
         hat: req.session.hat,
         rumpelLink: 'https://rumpel.hubofallthings.com/',
