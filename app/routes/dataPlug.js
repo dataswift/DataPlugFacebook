@@ -15,26 +15,26 @@ const update = require('../services/update.service');
 const facebookLoginForm = require('../views/facebookLoginForm.marko');
 const plugConfigurationPage = require('../views/plugConfiguration.marko');
 const accountStatsPage = require('../views/accountStats.marko');
-const setupConfirmPage = require('../views/setupConfirmPage.marko');
+const setupConfirmPage = require('../views/confirmationPage.marko');
 
 router.use(helpers.authMiddleware);
 
 router.get('/main', (req, res, next) => {
-  market.connectHat(req.session.hat.domain, (err) => {
-    if (err) {
-      console.log(`[ERROR][${new Date()}]`, err);
-      req.dataplug = { statusCode: '502' };
-      return next();
-    }
+  // market.connectHat(req.session.hat.domain, (err) => {
+  //   if (err) {
+  //     console.log(`[ERROR][${new Date()}]`, err);
+  //     req.dataplug = { statusCode: '502' };
+  //     return next();
+  //   }
 
-    hat.getAccessToken(req.session.hat.domain, (err, hatAccessToken) => {
-      if (err) {
-        console.log(`[ERROR][${new Date()}]`, err);
-        req.dataplug = { statusCode: '401' };
-        return next();
-      }
+  //   hat.getAccessToken(req.session.hat.domain, (err, hatAccessToken) => {
+  //     if (err) {
+  //       console.log(`[ERROR][${new Date()}]`, err);
+  //       req.dataplug = { statusCode: '401' };
+  //       return next();
+  //     }
 
-      req.session.hat.accessToken = hatAccessToken;
+  //     req.session.hat.accessToken = hatAccessToken;
 
       db.countDataSources(req.session.hat.domain, (err, count) => {
         if (err) {
@@ -51,17 +51,26 @@ router.get('/main', (req, res, next) => {
             redirectUri: config.webServerURL + '/facebook/authenticate'
           });
         } else {
-          return res.marko(accountStatsPage, { hat: req.session.hat });
+          db.getDataSourcesByDomain(req.session.hat.domain, (err, dataSources) => {
+            let idArray = dataSources.map(source => source._id);
+            req.session.fb.accessToken = dataSources[0].sourceAccessToken;
+            db.findUpdateJobsByIdList(idArray, (err, updateJobs) => {
+              let activeDataGroups = updateJobs.map(job => job.dataSource.name);
+              req.session.activeDataGroups = activeDataGroups;
+              return res.marko(accountStatsPage, { hat: req.session.hat, dataStats: updateJobs });
+            });
+          });
         }
       });
-    });
-  });
+  //   });
+  // });
 
 }, errors.renderErrorPage);
 
 router.get('/options', (req, res, next) => {
   return res.marko(plugConfigurationPage, {
-    hat: req.session.hat
+    hat: req.session.hat,
+    activeDataGroups: req.session.activeDataGroups || []
   });
 });
 
@@ -92,7 +101,9 @@ router.post('/options', (req, res, next) => {
         update.addInitJobs(savedEntries);
         return res.marko(setupConfirmPage, {
           hat: req.session.hat,
-          rumpelLink: 'https://rumpel.hubofallthings.com/'
+          rumpelLink: 'https://rumpel.hubofallthings.com/',
+          mainText: `The Data Plug has been set up to synchronize data between Facebook and your personal HAT.`,
+          note: `It may take up to 5 minutes before the data appears on Rumpel&trade;.`
         });
       });
   });

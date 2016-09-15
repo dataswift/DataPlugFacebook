@@ -51,3 +51,19 @@ exports.getGraphNode = (node, accessToken, lastestUpdateTime, callback) => {
     return callback(null, dataArray);
   });
 };
+
+exports.revokeLogin = (accessToken, callback) => {
+  const reqOptions = {
+    url: 'https://graph.facebook.com/me/permissions',
+    qs: { access_token: accessToken },
+    json: true
+  };
+
+  request.delete(reqOptions, (err, res, body) => {
+    if (err) return callback(err);
+    if (body.success === true) {
+      console.log('Successfully DEAUTHORIZED.');
+      return callback(null);
+    }
+  });
+};

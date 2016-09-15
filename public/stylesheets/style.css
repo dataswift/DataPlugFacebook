@@ -2,33 +2,9 @@ body {
   font-family: 'Open Sans Condensed', sans-serif;
   background-color: #262626;
   color: #ffffff;
-  font-weight: 500;
-}
-body ::-webkit-input-placeholder {
-  /* WebKit browsers */
-  font-family: 'Open Sans Condensed', sans-serif;
-  color: rgba(255, 255, 255, 0.8);
   font-weight: 300;
-}
-body :-moz-placeholder {
-  /* Mozilla Firefox 4 to 18 */
-  font-family: 'Open Sans Condensed', sans-serif;
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 1;
-  font-weight: 300;
-}
-body ::-moz-placeholder {
-  /* Mozilla Firefox 19+ */
-  font-family: 'Open Sans Condensed', sans-serif;
-  color: rgba(255, 255, 255, 0.8);
-  opacity: 1;
-  font-weight: 300;
-}
-body :-ms-input-placeholder {
-  /* Internet Explorer 10+ */
-  font-family: 'Open Sans Condensed', sans-serif;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
+  font-size: 11px;
+  margin-bottom: 6em;
 }
 
 .navbar {
@@ -100,8 +76,8 @@ body :-ms-input-placeholder {
   margin-top: 1.5em;
   display: block;
   text-align: center;
-  font-size: 1.3em;
-  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1.2em;
+  font-family: 'Open Sans Regular', sans-serif;
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
   font-weight: 300;
@@ -125,7 +101,7 @@ body :-ms-input-placeholder {
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 10px 20px;
   border-radius: 0;
-  font-size: 1.25em;
+  font-size: 1.2em;
   margin: 1em 0;
   font-weight: 300;
   font-family: 'Open Sans Condensed', sans-serif;
@@ -143,15 +119,15 @@ body :-ms-input-placeholder {
 
 input[type='checkbox'].pseudo-checkbox + label:before,
 input[type='checkbox'].pseudo-checkbox + label:after{
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: 100;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: 100;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 input[type='checkbox'].pseudo-checkbox + label:before {
@@ -160,4 +136,69 @@ input[type='checkbox'].pseudo-checkbox + label:before {
 
 input[type='checkbox']:checked.pseudo-checkbox + label:before {
   content: "\e067";
+}
+
+.navbar-nav > li > a {
+  padding: 0;
+}
+
+.checkbox-label {
+  font-family: 'Open Sans Regular', sans-serif;
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.navbar-nav {
+  margin-top: 0.75em;
+}
+
+.navbar-nav > li > a,
+.navbar-nav > li > p {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1.75em;
+  border: 0;
+  padding: 0.5em 0.5em;
+  color: white;
+  line-height: 0;
+}
+
+.navbar-nav > li > a:hover {
+  background-color: transparent;
+}
+
+.user-nav {
+  margin-top: 0.8em;
+  padding: 0.5em 0.5em;
+  border-left: solid 0.05em #ffffff;
+}
+
+.user-nav:first-child {
+  border: none;
+}
+
+.plug-info {
+  font-family: 'Open Sans Regular', sans-serif;
+  font-size: 1em;
+}
+
+.data-group .body {
+  font-family: 'Open Sans Regular', sans-serif;
+  font-size: 0.9em;
+  line-height: 1.8;
+  margin-top: 0;
+  margin-bottom: 2em;
+  padding: 2em 2em;
+  border: 1px solid white;
+}
+
+.data-group h4 {
+  font-family: 'Open Sans Condensed', sans-serif;
+  text-transform: uppercase;
+  margin: 0;
+  margin-top: 2em;
+  padding: 0.75em 1.5em;
+  background-color: white;
+  color: #262626;
+  display: inline-block;
+
 }

@@ -1,7 +1,27 @@
 <layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
   <layout-put into="container">
-    <h2>Plug already set up</h2>
+    <h3>Plug is currently set up</h3>
 
-    <p class="plug-info">The data plug for the specified HAT has already been setup. Please, try again later.</p>
+    <ul>
+      <li for(dataGroup in data.dataStats) class="data-group">
+        <h4>${dataGroup.dataSource.name}</h4>
+        <div class="body">
+          <div class="row">
+            <div class="col-xs-4">Date Created:</div><div class="col-xs-8">${dataGroup.createdAt}</div>
+            <div class="col-xs-4">Last Successful Attempt:</div><div class="col-xs-8">${dataGroup.lastSuccessAt || 'not set yet'}</div>
+            <div class="col-xs-4">Last Failed Attempt:</div><div class="col-xs-8">${dataGroup.lastFailureAt || 'not set yet'}</div>
+            <div class="col-xs-4">Synchronisation Interval:</div><div class="col-xs-8">every ${dataGroup.repeatInterval / 1000 / 60 / 60} hours</div>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="container">
+      <a href="/dataplug/options" class="plug-button">Add More Data Categories</a>
+    </div>
+
+    <div class="container">
+      <a href="/facebook/deauthorize" class="plug-button">Disconnect Social Plug from Facebook</a>
+    </div>
   </layout-put>
 </layout-use>

@@ -1,15 +1,22 @@
 'use strict';
 
+const mongoose = require('mongoose');
 const HatDataSource = require('../models/HatDataSource.model');
 const UpdateJob = require('../models/UpdateJob.model');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
+
+let internals = {};
 
 exports.countDataSources = (hatDomain, callback) => {
   return HatDataSource.count({ hatHost: hatDomain }, (err, count) => {
     if (err) return callback(err);
     return callback(null, count);
   });
+};
+
+exports.getDataSourcesByDomain = (domain, callback) => {
+  return HatDataSource.find({ hatHost: domain }, callback);
 };
 
 exports.createDataSources = (names, source, hatDomain, sourceAT, callback) => {
@@ -64,6 +71,14 @@ exports.createUpdateJobs = (dataSources, callback) => {
   return UpdateJob.create(newDbEntries, callback);
 };
 
+exports.findUpdateJobsByIdList = (idList, callback) => {
+  let mongoosedIds = idList.map(id => mongoose.Types.ObjectId(id));
+
+  return UpdateJob.find({ 'dataSource': { $in: mongoosedIds } })
+    .populate('dataSource')
+    .exec(callback);
+};
+
 exports.findDueJobs = (onQueueJobs, callback) => {
 
   return UpdateJob.find({ nextRunAt: { $lt: new Date() },
@@ -94,4 +109,30 @@ exports.updateCompleteJob = (job, isSuccess, nextRunAt, callback) => {
   }
 
   return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
+};
+
+exports.deleteJobsAndDataSourcesByDomain = (domain, callback) => {
+  exports.getDataSourcesByDomain(domain, (err, dataSources) => {
+    if (err) return callback(err);
+
+    internals.deleteUpdateJobsByIdList(dataSources, (err) => {
+      if (err) return callback(err);
+
+      internals.deleteDataSourcesByDomain(domain, (err) => {
+        if (err) return callback(err);
+
+        return callback(null);
+      });
+    });
+  });
+};
+
+internals.deleteUpdateJobsByIdList = (dataSources, callback) => {
+  let mongoosedIds = dataSources.map(source => mongoose.Types.ObjectId(source._id));
+
+  return UpdateJob.remove({ 'dataSource': { $in: mongoosedIds } }, callback);
+};
+
+internals.deleteDataSourcesByDomain = (domain, callback) => {
+  return HatDataSource.remove({ hatHost: domain }, callback);
 };

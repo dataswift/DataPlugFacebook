@@ -2,12 +2,12 @@
   <layout-put into="container">
     <h2>Success!</h2>
 
-    <p class="plug-info">The Data Plug has been set up to synchronize data between Facebook and your personal HAT.</p>
+    <p class="plug-info">${data.mainText}</p>
 
     <div class="container">
       <a href=data.rumpelLink class="plug-button">Take me back to Rumpel&trade;</a>
 
-      <span class="info">It may take up to 5 minutes before the data appears on Rumpel&trade;.</span>
+      <span class="info">${data.note}</span>
     </div>
   </layout-put>
 </layout-use>

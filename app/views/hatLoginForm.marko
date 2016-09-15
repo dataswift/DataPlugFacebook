@@ -2,12 +2,12 @@
   <layout-put into="container">
     <h2>HAT Login</h2>
 
-    <p class="plug-info">Please enter your Personal HAT Address (PHATA). Afterwards, you will be redirected to the HAT to log in with your password. If you have entered your HAT password recently, the process will be automatic.</p>
+    <p class="plug-info">Please enter your Personal HAT Address (PHATA). You will then be directed to the HAT to log in with your password. If you are already logged onto to your HAT and/or have entered your HAT password recently, the process will be automatic.</p>
 
     <form class="container" id="hat-login" name="hatLogin" method="post" action="/dataplug/hat">
       <div class="form-group">
-        <label for="hat-domain">PHATA</label>
-        <input type="text" id="hat-domain" name="hatDomain" placeholder="hat.hubofallthings.net" value=data.hatDomain />
+        <!-- <label for="hat-domain">Your personal HAT address</label> -->
+        <input type="text" id="hat-domain" name="hatDomain" placeholder="Your personal HAT address" value=data.hatDomain />
       </div>
 
       <div class="form-group actions">

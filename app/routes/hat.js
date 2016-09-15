@@ -17,7 +17,7 @@ router.get('/login', (req, res, next) => {
 
 router.get('/logout', (req, res, next) => {
   req.session.hat = { authenticated: false, domain: '', url: '' };
-  req.session.fb = {};
+  req.session.fb = { accessToken: '' };
 
   return req.session.save(function (err) {
     return res.redirect('/');
@@ -40,6 +40,8 @@ router.get('/authenticate', (req, res, next) => {
         url: `${config.protocol}://${hatDomain}`,
         authenticated: authenticated
       };
+
+      req.session.fb = { accessToken: '' };
 
       return req.session.save(function (err) {
         return res.redirect('/dataplug/main');
