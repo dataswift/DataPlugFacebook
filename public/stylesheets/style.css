@@ -111,6 +111,7 @@ body {
   width: 100%;
   color: #cccccc;
 }
+
 .container .plug-button:hover {
   background-color: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -200,5 +201,4 @@ input[type='checkbox']:checked.pseudo-checkbox + label:before {
   background-color: white;
   color: #262626;
   display: inline-block;
-
 }

@@ -36,9 +36,9 @@ config.protocol = process.env.SECURE === 'true' ? 'https' : 'http';
 
 config.updateIntervals = {
   profile: 7 * 24 * 60 * 60 * 1000,
-  events: 24 * 60 * 60 * 1000,
+  events: 6 * 60 * 60 * 1000,
   posts: 1 * 60 * 60 * 1000,
-  profile_picture: 100 * 24 * 60 * 60 * 1000,
+  profile_picture: 24 * 60 * 60 * 1000,
   music_listens: 24 * 60 * 60 * 1000,
 };
 
