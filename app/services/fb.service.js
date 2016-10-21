@@ -3,6 +3,7 @@
 const request = require('request');
 const qs = require('qs');
 const _ = require('lodash');
+const moment = require('moment');
 
 const config = require('../config');
 const fbReqGenerator = require('../config/fbFields');
@@ -18,12 +19,39 @@ exports.exchangeCodeForToken = (code, callback) => {
     }
   };
 
+  let now = moment();
+
   request.get(tokenRequestOptions, (err, res, body) => {
     if (err) return callback(err);
 
-    const accessToken = JSON.parse(body).access_token;
+    let bodyJson;
 
-    return callback(null, accessToken);
+    try {
+      bodyJson = JSON.parse(body);
+    } catch (e) {
+      return callback(e);
+    }
+
+    let userPermissions = {
+      accessToken: bodyJson.access_token,
+      validUntil: now.add(bodyJson.expires_in, "s")
+    };
+
+    return callback(null, userPermissions);
+  });
+};
+
+exports.getUserPermissions = (accessToken, callback) => {
+  const reqOptions = {
+    url: 'https://graph.facebook.com/v2.5/me/permissions',
+    qs: { access_token: accessToken },
+    json: true
+  };
+
+  request.get(reqOptions, (err, res, body) => {
+    if (err) return callback(err);
+
+    return callback(null, body.data)
   });
 };
 

@@ -3,6 +3,8 @@
 const mongoose = require('mongoose');
 const HatDataSource = require('../models/HatDataSource.model');
 const UpdateJob = require('../models/UpdateJob.model');
+const Post = require('../models/Post.model');
+const UserPermissions = require('../models/UserPermissions.model');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
 
@@ -46,6 +48,15 @@ exports.updateDataSource = (docUpdate, dataSource, callback) => {
   };
 
   return HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
+};
+
+exports.upsertUserPermissions = (userPermissions, callback) => {
+  return UserPermissions.findOneAndUpdate(
+    userPermissions.hatDomain,
+    userPermissions,
+    { upsert: true, new: true },
+    callback
+  );
 };
 
 exports.createUpdateJobs = (dataSources, callback) => {

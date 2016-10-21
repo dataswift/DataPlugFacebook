@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require('express');
 const router = express.Router();
 const fb = require('../services/fb.service');
@@ -21,7 +23,7 @@ router.get('/authenticate', (req, res, next) => {
     return next();
   }
 
-  fb.exchangeCodeForToken(req.query.code, (err, sourceAccessToken) => {
+  fb.exchangeCodeForToken(req.query.code, (err, userPermissions) => {
     if (err) {
       console.log(`[ERROR][${new Date()}]`, err);
       req.dataplug = { statusCode: '502' };
@@ -29,11 +31,30 @@ router.get('/authenticate', (req, res, next) => {
     }
 
     req.session.fb = {
-      accessToken: sourceAccessToken
+      accessToken: userPermissions.accessToken
     };
 
-    req.session.save((err) => {
-      res.redirect('/dataplug/options');
+    fb.getUserPermissions(req.session.fb.accessToken, (err, permissionArray) => {
+      if (err) {
+        console.log(`[ERROR][${new Date()}]`, err);
+        req.dataplug = { statusCode: '502' };
+        return next();
+      }
+
+      userPermissions.permissions = permissionArray;
+      userPermissions.hatDomain = req.session.hat.domain;
+
+      db.upsertUserPermissions(userPermissions, (err, newRecord) => {
+        if (err) {
+          console.log(`[ERROR][${new Date()}]`, err);
+          req.dataplug = { statusCode: '500' };
+          return next();
+        }
+
+        req.session.save((err) => {
+          res.redirect('/dataplug/options');
+        });
+      });
     });
   });
 }, errors.renderErrorPage);
