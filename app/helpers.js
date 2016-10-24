@@ -2,6 +2,8 @@
 
 const config = require('./config');
 
+const hat = require('./services/hat.service');
+
 exports.createSessionData = (req, res, next) => {
   if (req.session.hat) {
     return next();
@@ -29,5 +31,20 @@ exports.authServices = (req, res, next) => {
     return next();
   } else {
     return res.status(401).json({ error: "Access denied." });
+  }
+};
+
+exports.authApplication = (req, res, next) => {
+  if (req.headers && req.headers['x-auth-token']) {
+    hat.verifyToken(req.headers['x-auth-token'], (err, authenticated, hatDomain) => {
+      if (err || authenticated === false) {
+        return res.status(401).json({ error: "Access denied." });
+      } else {
+        req.hat = { domain: hatDomain };
+        return next();
+      }
+    });
+  } else {
+    return res.status(400).json({ error: "Missing authentication headers." })
   }
 };

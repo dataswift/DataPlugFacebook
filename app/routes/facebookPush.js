@@ -56,7 +56,7 @@ const canPostForUser = (req, res, next) => {
   });
 };
 
-router.post('/facebook/post/create', canPostForUser, (req, res, next) => {
+router.post('/post/create', canPostForUser, (req, res, next) => {
   db.createPost({
     hatDomain: req.post.hatDomain,
     notableId: req.post.notableId,
@@ -81,7 +81,7 @@ router.post('/facebook/post/create', canPostForUser, (req, res, next) => {
   });
 });
 
-router.put('/facebook/post/:notableId/update', findHatDomain, canPostForUser, (req, res, next) => {
+router.put('/post/:notableId/update', findHatDomain, canPostForUser, (req, res, next) => {
   fb.update(req.user.accessToken, req.body.message, req.post.facebookId, (err, updateRes) => {
     let updateContent = {
       postedTime: moment()
@@ -97,7 +97,7 @@ router.put('/facebook/post/:notableId/update', findHatDomain, canPostForUser, (r
   });
 });
 
-router.delete('/facebook/post/:notableId/delete', findHatDomain, canPostForUser, (req, res, next) => {
+router.delete('/post/:notableId/delete', findHatDomain, canPostForUser, (req, res, next) => {
   fb.delete(req.user.accessToken, req.post.facebookId, (err, updateRes) => {
     if (err) {
       return res.status(502).json({ error: "Specified resource could not be reached." })

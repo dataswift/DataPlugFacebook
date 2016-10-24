@@ -41,11 +41,13 @@ const indexRoutes = require('./routes/index');
 const hatRoutes = require('./routes/hat');
 const dataPlugRoutes = require('./routes/dataPlug');
 const callbackRoutes = require('./routes/callback');
-const apiRoutes = require('./routes/api');
+const facebookPushRoutes = require('./routes/facebookPush');
+const userRoutes = require('./routes/user');
 
 app.use('/', indexRoutes);
 app.use('/hat', hatRoutes);
-app.use('/api', apiRoutes);
+app.use('/api/facebook', facebookPushRoutes);
+app.use('/api/user', userRoutes);
 app.use('/dataplug', dataPlugRoutes);
 app.use('/facebook', callbackRoutes);
 
