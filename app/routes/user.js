@@ -6,6 +6,12 @@ const router = express.Router();
 const db = require('../services/db.service');
 const helpers = require('../helpers');
 
+router.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, X-Auth-Token, Content-Type, Accept");
+  next();
+});
+
 router.get('/token/status', helpers.authApplication, (req, res, next) => {
   db.getUserPermissions(req.hat.domain, (err, users) => {
     if (users.length === 0) {
