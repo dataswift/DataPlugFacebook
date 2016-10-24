@@ -41,6 +41,50 @@ exports.exchangeCodeForToken = (code, callback) => {
   });
 };
 
+exports.post = (accessToken, message, callback) => {
+  const reqOptions = {
+    url: 'https://graph.facebook.com/v2.5/me/feed',
+    qs: { access_token: accessToken },
+    body: { message: message },
+    json: true
+  };
+
+  request.post(reqOptions, (err, res, body) => {
+    if (err) return callback(err, body);
+
+    return callback(null, body.id);
+  });
+};
+
+exports.update = (accessToken, message, postId, callback) => {
+  const reqOptions = {
+    url: `https://graph.facebook.com/v2.5/${postId}`,
+    qs: { access_token: accessToken },
+    body: { message: message },
+    json: true
+  };
+
+  request.post(reqOptions, (err, res, body) => {
+    if (err) return callback(err);
+
+    return callback(null, body);
+  });
+};
+
+exports.delete = (accessToken, postId, callback) => {
+  const reqOptions = {
+    url: `https://graph.facebook.com/v2.5/${postId}`,
+    qs: { access_token: accessToken },
+    json: true
+  };
+
+  request.delete(reqOptions, (err, res, body) => {
+    if (err) return callback (err);
+
+    return callback(null, body);
+  });
+};
+
 exports.getUserPermissions = (accessToken, callback) => {
   const reqOptions = {
     url: 'https://graph.facebook.com/v2.5/me/permissions',

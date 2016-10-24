@@ -50,6 +50,22 @@ exports.updateDataSource = (docUpdate, dataSource, callback) => {
   return HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
 };
 
+exports.getUserPermissions = (hatDomain, callback) => {
+  return UserPermissions.find({ hatDomain: hatDomain }, callback);
+};
+
+exports.getPost = (notableId, callback) => {
+  return Post.find({ notableId: notableId }, callback);
+};
+
+exports.createPost = (post, callback) => {
+  return Post.create(post, callback);
+};
+
+exports.updatePost = (id, update, callback) => {
+  return Post.findByIdAndUpdate(id, update, { new: true }, callback);
+};
+
 exports.upsertUserPermissions = (userPermissions, callback) => {
   return UserPermissions.findOneAndUpdate(
     userPermissions.hatDomain,

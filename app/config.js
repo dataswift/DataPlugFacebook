@@ -18,7 +18,7 @@ config.mongodb = {
 config.fb = {
   appID: process.env.FB_APP_ID,
   appSecret: process.env.FB_APP_SECRET,
-  accessScope: 'user_about_me,user_birthday,public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
+  accessScope: 'publish_actions,user_about_me,user_birthday,public_profile,user_friends,user_events,user_likes,user_location,user_posts,user_relationships,user_tagged_places'
 };
 
 config.market = {
@@ -30,6 +30,10 @@ config.market = {
 config.hat = {
   username: process.env.HAT_USER,
   password: process.env.HAT_PASSWORD
+};
+
+config.services = {
+  accessToken: process.env.SERVICES_ACCESS_TOKEN
 };
 
 config.protocol = process.env.SECURE === 'true' ? 'https' : 'http';

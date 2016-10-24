@@ -22,7 +22,6 @@ app.disable('etag');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -42,9 +41,11 @@ const indexRoutes = require('./routes/index');
 const hatRoutes = require('./routes/hat');
 const dataPlugRoutes = require('./routes/dataPlug');
 const callbackRoutes = require('./routes/callback');
+const apiRoutes = require('./routes/api');
 
 app.use('/', indexRoutes);
 app.use('/hat', hatRoutes);
+app.use('/api', apiRoutes);
 app.use('/dataplug', dataPlugRoutes);
 app.use('/facebook', callbackRoutes);
 
