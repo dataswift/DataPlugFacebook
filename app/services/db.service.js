@@ -59,8 +59,8 @@ exports.getUser = (hatDomain, callback) => {
 };
 
 exports.upsertUser = (user, callback) => {
-  return User.findOneAndUpdate(user.hatDomain, user,
-                              { upsert: true, new: true, passRawResult: true }, callback);
+  return User.findOneAndUpdate({ hatDomain: user.hatDomain }, user,
+                               { upsert: true, new: true, passRawResult: true }, callback);
 };
 
 exports.deleteUser = (hatDomain, callback) => {
