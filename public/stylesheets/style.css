@@ -174,7 +174,7 @@ input[type='checkbox']:checked.pseudo-checkbox + label:before {
 }
 
 .user-nav:first-child {
-  border: none;
+  border-left: none;
 }
 
 .plug-info {

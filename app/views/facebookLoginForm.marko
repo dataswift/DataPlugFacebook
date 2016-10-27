@@ -2,12 +2,15 @@
   <layout-put into="container">
     <h2>Facebook Login</h2>
 
-    <p class="plug-info">Please click the button below to login to Facebook. You will be directed to Facebook's website to complete the login.</p>
+    <p class="plug-info" if(data.tokenRenewal)>Please click the button below to refresh Facebook token.</p>
+    <p class="plug-info" if(!data.tokenRenewal)>Please click the button below to login to Facebook. You will be directed to Facebook's website to complete the login.</p>
 
-    <p class="plug-info">Note: if you have recently logged into Facebook, the process could be automatic.</p>
+    <p class="plug-info">Note: if you have recently logged into Facebook, the process will be automatic.</p>
 
     <div class="container">
-      <a href="https://www.facebook.com/dialog/oauth?client_id=${data.fbAppId}&redirect_uri=${data.redirectUri}&scope=${data.fbAccessScope}" class="plug-button">Login with Facebook</a>
+      <a href="https://www.facebook.com/dialog/oauth?client_id=${data.fbAppId}&redirect_uri=${data.redirectUri}&scope=${data.fbAccessScope}" class="plug-button">
+        ${ data.tokenRenewal ? 'Refresh Token' : 'Login with Facebook' }
+      </a>
     </div>
   </layout-put>
 </layout-use>

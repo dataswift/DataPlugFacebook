@@ -44,15 +44,29 @@ router.get('/authenticate', (req, res, next) => {
       userPermissions.permissions = permissionArray;
       userPermissions.hatDomain = req.session.hat.domain;
 
-      db.upsertUserPermissions(userPermissions, (err, newRecord) => {
+      db.upsertUser(userPermissions, (err, newUserRecord, rawResult) => {
         if (err) {
           console.log(`[ERROR][${new Date()}]`, err);
           req.dataplug = { statusCode: '500' };
           return next();
         }
 
-        req.session.save((err) => {
-          res.redirect('/dataplug/options');
+        db.updateAccessToken(newUserRecord.hatDomain, newUserRecord.accessToken, (err, dbResponse) => {
+          if (err) {
+            console.log(`[ERROR][${new Date()}]`, err);
+            req.dataplug = { statusCode: '500' };
+            return next();
+          }
+
+          req.session.save((err) => {
+            if (rawResult.lastErrorObject.updatedExisting) {
+              console.log("[LOGIN] Updated user credentials.");
+              return res.redirect('/dataplug/main');
+            } else {
+              console.log("[LOGIN] Created new user.");
+              return res.redirect('/dataplug/options');
+            }
+          });
         });
       });
     });
@@ -78,11 +92,19 @@ router.get('/deauthorize', (req, res, next) => {
 
       req.session.activeDataGroups = [];
 
-      return res.marko(deauthoriseConfirmPage, {
-        hat: req.session.hat,
-        rumpelLink: 'https://rumpel.hubofallthings.com/',
-        mainText: `You have successfully logged out of Facebook and fully deauthorised access to your data.`,
-        note: ``
+      db.deleteUser(req.session.hat.domain, (err) => {
+        if (err) {
+          console.log(`[ERROR][${new Date()}]`, err);
+          req.dataplug = { statusCode: '500' };
+          return next();
+        }
+
+        return res.marko(deauthoriseConfirmPage, {
+          hat: req.session.hat,
+          rumpelLink: 'https://rumpel.hubofallthings.com/',
+          mainText: `You have successfully logged out of Facebook and fully deauthorised access to your data.`,
+          note: ``
+        });
       });
     });
   });

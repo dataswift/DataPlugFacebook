@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 
 const config = require('../config');
 const errors = require('../errors');
@@ -36,24 +37,25 @@ router.get('/main', (req, res, next) => {
 
       req.session.hat.accessToken = hatAccessToken;
 
-      db.countDataSources(req.session.hat.domain, (err, count) => {
+      db.getUser(req.session.hat.domain, (err, users) => {
         if (err) {
           console.log(`[ERROR][${new Date()}]`, err);
           req.dataplug = { statusCode: '500' };
           return next();
         }
 
-        if (count === 0) {
+        if (users.length === 0 || moment(users[0].validUntil).isBefore()) {
           return res.marko(facebookLoginForm, {
             hat: req.session.hat,
             fbAppId: config.fb.appID,
             fbAccessScope: config.fb.accessScope,
-            redirectUri: config.webServerURL + '/facebook/authenticate'
+            redirectUri: config.webServerURL + '/facebook/authenticate',
+            tokenRenewal: users.length > 0
           });
         } else {
           db.getDataSourcesByDomain(req.session.hat.domain, (err, dataSources) => {
             let idArray = dataSources.map(source => source._id);
-            req.session.fb.accessToken = dataSources[0].sourceAccessToken;
+            req.session.fb.accessToken = users[0].accessToken;
             db.findUpdateJobsByIdList(idArray, (err, updateJobs) => {
               let activeDataGroups = updateJobs.map(job => job.dataSource.name);
               req.session.activeDataGroups = activeDataGroups;
@@ -80,8 +82,6 @@ router.post('/options', (req, res, next) => {
   if (!dataSources) return res.redirect('/dataplug/options');
   if (!Array.isArray(dataSources)) dataSources = [dataSources];
 
-  dataSources.push('profile_picture');
-
   db.createDataSources(dataSources,
                        'facebook',
                        req.session.hat.domain,
@@ -103,7 +103,7 @@ router.post('/options', (req, res, next) => {
           hat: req.session.hat,
           rumpelLink: 'https://rumpel.hubofallthings.com/',
           mainText: `The Data Plug has been set up to synchronize data between Facebook and your personal HAT.`,
-          note: `It may take up to 5 minutes before the data appears on Rumpel&trade;.`
+          note: `It may take up to 5 minutes before the data appears on Rumpel.`
         });
       });
   });

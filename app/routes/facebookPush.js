@@ -34,7 +34,7 @@ const canPostForUser = (req, res, next) => {
     req.post = { hatDomain: req.body.hatDomain, notableId: req.body.notableId };
   }
 
-  db.getUserPermissions(req.post.hatDomain, (err, users) => {
+  db.getUser(req.post.hatDomain, (err, users) => {
     if (err) {
       return res.status(500).json({ error: "Internal server error."});
     }

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const HatDataSource = require('../models/HatDataSource.model');
 const UpdateJob = require('../models/UpdateJob.model');
 const Post = require('../models/Post.model');
-const UserPermissions = require('../models/UserPermissions.model');
+const User = require('../models/User.model.js');
 const fbHatModels = require('../config/fbHatModels');
 const config = require('../config');
 
@@ -50,8 +50,21 @@ exports.updateDataSource = (docUpdate, dataSource, callback) => {
   return HatDataSource.findOneAndUpdate(dataSourceFindParams, docUpdate, { new: true }, callback);
 };
 
-exports.getUserPermissions = (hatDomain, callback) => {
-  return UserPermissions.find({ hatDomain: hatDomain }, callback);
+exports.updateAccessToken = (hatDomain, accessToken, callback) => {
+  return HatDataSource.update({ hatHost: hatDomain }, { sourceAccessToken: accessToken }, { multi: true }, callback);
+};
+
+exports.getUser = (hatDomain, callback) => {
+  return User.find({ hatDomain: hatDomain }, callback);
+};
+
+exports.upsertUser = (user, callback) => {
+  return User.findOneAndUpdate(user.hatDomain, user,
+                              { upsert: true, new: true, passRawResult: true }, callback);
+};
+
+exports.deleteUser = (hatDomain, callback) => {
+  return User.remove({ "hatDomain": hatDomain }, callback);
 };
 
 exports.getPost = (notableId, callback) => {
@@ -64,15 +77,6 @@ exports.createPost = (post, callback) => {
 
 exports.updatePost = (id, update, callback) => {
   return Post.findByIdAndUpdate(id, update, { new: true }, callback);
-};
-
-exports.upsertUserPermissions = (userPermissions, callback) => {
-  return UserPermissions.findOneAndUpdate(
-    userPermissions.hatDomain,
-    userPermissions,
-    { upsert: true, new: true },
-    callback
-  );
 };
 
 exports.createUpdateJobs = (dataSources, callback) => {
