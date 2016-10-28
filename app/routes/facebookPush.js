@@ -57,25 +57,31 @@ const canPostForUser = (req, res, next) => {
 };
 
 router.post('/post/create', canPostForUser, (req, res, next) => {
-  db.createPost({
-    hatDomain: req.post.hatDomain,
-    notableId: req.post.notableId,
-    posted: false
-  }, (err, record) => {
-    if (err) return res.status(500).json({ error: "Internal server error."});
+  db.getPost(req.post.notableId, (err, posts) => {
+    if (err || posts.length > 0) {
+      return res.status(400).json({ error: "Specified item already exists." });
+    }
 
-    fb.post(req.user.accessToken, req.body.message, (err, facebookId) => {
-      let updateContent = {
-        facebookId: facebookId,
-        posted: true,
-        postedTime: moment()
-      };
+    db.createPost({
+      hatDomain: req.post.hatDomain,
+      notableId: req.post.notableId,
+      posted: false
+    }, (err, record) => {
+      if (err) return res.status(500).json({ error: "Internal server error."});
 
-      db.updatePost(record._id, updateContent, (err, updatedRecord) => {
-        if (err) {
-          return res.status(500).json({ error: "Internal server error."});
-        }
-        return res.status(200).json({ message: "Post accepted for publishing." });
+      fb.post(req.user.accessToken, req.body.message, (err, facebookId) => {
+        let updateContent = {
+          facebookId: facebookId,
+          posted: true,
+          postedTime: moment()
+        };
+
+        db.updatePost(record._id, updateContent, (err, updatedRecord) => {
+          if (err) {
+            return res.status(500).json({ error: "Internal server error."});
+          }
+          return res.status(200).json({ message: "Post accepted for publishing." });
+        });
       });
     });
   });
