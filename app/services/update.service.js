@@ -21,10 +21,19 @@ setInterval(() => {
     }
 
     const updateTasks = results.reduce((memo, result) => {
-      if (result.dataSource.dataSourceModelId && result.dataSource.hatIdMapping) {
-        memo.push({ task: 'UPDATE_RECORDS', updateInfo: result, dataSource: result.dataSource });
+      if (result.dataSource) {
+        if (result.dataSource.dataSourceModelId && result.dataSource.hatIdMapping) {
+          memo.push({task: 'UPDATE_RECORDS', updateInfo: result, dataSource: result.dataSource});
+        } else {
+          memo.push({task: 'CREATE_MODEL', dataSource: result.dataSource});
+        }
       } else {
-        memo.push({ task: 'CREATE_MODEL', dataSource: result.dataSource });
+        console.log("[UPDATE] Found 1 flawed update job.");
+        db.updateUpdateJob(result, (err) => {
+          if (err) {
+            console.log("Error marking flawed updated job.", err);
+          }
+        });
       }
 
       return memo;

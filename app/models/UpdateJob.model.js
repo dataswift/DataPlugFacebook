@@ -11,7 +11,8 @@ const UpdateJobSchema = new Schema({
   nextRunAt:        Date,
   lastSuccessAt:    Date,
   lastFailureAt:    Date,
-  lockedAt:         Date
+  lockedAt:         Date,
+  dataSourceFlawed: Boolean
 });
 
 module.exports = mongoose.model('UpdateJob', UpdateJobSchema);

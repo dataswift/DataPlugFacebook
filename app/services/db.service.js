@@ -142,6 +142,10 @@ exports.updateCompleteJob = (job, isSuccess, nextRunAt, callback) => {
   return UpdateJob.findByIdAndUpdate(job._id, docUpdate, { new: true }, callback);
 };
 
+exports.updateUpdateJob = (updateJob, callback) => {
+  return UpdateJob.findOneAndUpdate({ "_id": updateJob._id }, { "dataSourceFlawed": true }, { new: true }, callback);
+};
+
 exports.deleteJobsAndDataSourcesByDomain = (domain, callback) => {
   exports.getDataSourcesByDomain(domain, (err, dataSources) => {
     if (err) return callback(err);
