@@ -13,5 +13,37 @@
 
       <span class="info">${data.note}</span>
     </div>
+
+    <div class="container facebook" if(data.shareNote)>
+      <span class="info">${data.shareNote}</span>
+      <button id="facebook" type="button" class="share-on-facebook"><img src="/facebook-icon.png">Share on Facebook</button>
+    </div>
+
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '158753364485419',
+          xfbml      : true,
+          version    : 'v2.5'
+        });
+        FB.AppEvents.logPageView();
+        document.getElementById("facebook").addEventListener("click", function() {
+          FB.ui({
+            method: 'share',
+            mobile_iframe: true,
+            href: 'https://rumpel.hubofallthings.com/',
+            hashtag: '#hubofallthings #hat',
+          }, function(response){});
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_GB/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
   </layout-put>
 </layout-use>

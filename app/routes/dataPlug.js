@@ -66,7 +66,6 @@ router.get('/main', (req, res, next) => {
       });
     });
   });
-
 }, errors.renderErrorPage);
 
 router.get('/options', (req, res, next) => {
@@ -103,7 +102,8 @@ router.post('/options', (req, res, next) => {
           hat: req.session.hat,
           rumpelLink: 'https://rumpel.hubofallthings.com/',
           mainText: `The Data Plug has been set up to synchronize data between Facebook and your personal HAT.`,
-          note: `It may take up to 5 minutes before the data appears on Rumpel.`
+          note: `It may take up to 5 minutes before the data appears on Rumpel.`,
+          shareNote: 'Tell your friends on Facebook that you now have your Facebook data on your HAT!'
         });
       });
   });

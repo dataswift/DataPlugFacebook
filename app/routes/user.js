@@ -13,7 +13,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/token/status', helpers.authApplication, (req, res, next) => {
-  db.getUserPermissions(req.hat.domain, (err, users) => {
+  db.getUser(req.hat.domain, (err, users) => {
     if (users.length === 0) {
       return res.status(404).json({ phata: req.hat.domain, error: "Token not found." });
     }

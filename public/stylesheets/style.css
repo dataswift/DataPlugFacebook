@@ -92,6 +92,10 @@ body {
   background-color: white;
 }
 
+.container.facebook {
+  margin-top: 2em;
+}
+
 .container .plug-button {
   display: block;
   -webkit-appearance: none;
@@ -106,7 +110,6 @@ body {
   font-weight: 300;
   font-family: 'Open Sans Condensed', sans-serif;
   cursor: pointer;
-  color: white;
   text-decoration: none;
   width: 100%;
   color: #cccccc;
@@ -116,6 +119,28 @@ body {
   background-color: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.6);
   color: #ffffff;
+}
+
+.container .share-on-facebook {
+  display: block;
+  background-color: #3b5998;
+  border: 1px solid #29487d;
+  padding: 10px 20px;
+  border-radius: 0;
+  font-size: 1.2em;
+  margin: 1em 0;
+  font-weight: 300;
+  font-family: 'Open Sans Condensed', sans-serif;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  width: 100%;
+}
+
+.container img {
+  max-height: 1.5em;
+  vertical-align: bottom;
+  margin-right: 0.75em;
 }
 
 input[type='checkbox'].pseudo-checkbox + label:before,
