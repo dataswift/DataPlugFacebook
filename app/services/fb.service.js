@@ -133,8 +133,17 @@ exports.revokeLogin = (accessToken, callback) => {
   };
 
   request.delete(reqOptions, (err, res, body) => {
-    if (err) return callback(err);
-    if (body.success === true) {
+    if (err) {
+      return callback(err);
+    } else if (res.statusCode !== 200) {
+
+      if (body.error && body.error.type === "OAuthException") {
+        return callback(null);
+      } else {
+        return callback(body);
+      }
+
+    } else {
       console.log('Successfully DEAUTHORIZED.');
       return callback(null);
     }
