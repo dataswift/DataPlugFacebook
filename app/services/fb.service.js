@@ -50,7 +50,8 @@ exports.post = (accessToken, message, callback) => {
   };
 
   request.post(reqOptions, (err, res, body) => {
-    if (err) return callback(err, body);
+    if (err) return callback(err);
+    if (res.statusCode !== 200) return callback(body);
 
     return callback(null, body.id);
   });

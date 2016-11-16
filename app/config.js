@@ -36,6 +36,12 @@ config.services = {
   accessToken: process.env.SERVICES_ACCESS_TOKEN
 };
 
+config.ses = {
+  key: process.env.SES_KEY,
+  secret: process.env.SES_SECRET,
+  amazon: 'https://email.eu-west-1.amazonaws.com'
+};
+
 config.protocol = process.env.SECURE === 'true' ? 'https' : 'http';
 
 config.updateIntervals = {
