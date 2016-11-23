@@ -40,14 +40,14 @@ exports.getAccessToken = (hatDomain, callback) => {
     url: `${config.protocol}://${hatDomain}/users/access_token`,
     headers: {
       "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    qs: {
-      username: config.hat.username,
-      password: config.hat.password
+      "Content-Type": "application/json",
+      "username": config.hat.username,
+      "password": config.hat.password
     },
     json: true
   };
+
+  console.log("[HAT] Headers", reqOptions.headers);
 
   request.get(reqOptions, (err, res, body) => {
     if (err) return callback(err);
@@ -146,6 +146,8 @@ internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {
 };
 
 internals.createHatRecords = (hatHost, hatAccessToken, records, callback) => {
+  console.log(`[HAT] About to post records to ${hatHost} with accessToken ${hatAccessToken}:
+    ${records}`);
   var client = new hat.Client(config.protocol + '://' + hatHost, hatAccessToken);
   client.createMultipleRecords(records, callback);
 };
