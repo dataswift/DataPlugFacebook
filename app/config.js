@@ -18,7 +18,7 @@ config.mongodb = {
 config.fb = {
   appID: process.env.FB_APP_ID,
   appSecret: process.env.FB_APP_SECRET,
-  accessScope: 'publish_actions,public_profile,user_friends,user_events,user_posts,email'
+  accessScope: 'publish_actions,public_profile,user_friends,user_events,user_posts,email,user_actions.music'
 };
 
 config.market = {

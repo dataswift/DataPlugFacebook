@@ -146,8 +146,7 @@ internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {
 };
 
 internals.createHatRecords = (hatHost, hatAccessToken, records, callback) => {
-  console.log(`[HAT] About to post records to ${hatHost} with accessToken ${hatAccessToken}:
-    ${records}`);
+  console.log(`[HAT] About to post records to ${hatHost} with accessToken ${hatAccessToken}.`);
   var client = new hat.Client(config.protocol + '://' + hatHost, hatAccessToken);
   client.createMultipleRecords(records, callback);
 };

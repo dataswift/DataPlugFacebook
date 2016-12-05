@@ -174,10 +174,20 @@ var hatDataSourceConfig = {
             { name: "type" },
             { name: "url" }
           ]
+        },
+        {
+          name: 'musician',
+          source: 'facebook',
+          fields: [
+            { name: "id" },
+            { name: "title" },
+            { name: "type" },
+            { name: "url" }
+          ]
         }
       ]
     }]
   }
-}
+};
 
 module.exports = hatDataSourceConfig;
