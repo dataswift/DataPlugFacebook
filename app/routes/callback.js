@@ -5,6 +5,7 @@ const router = express.Router();
 const fb = require('../services/fb.service');
 const db = require('../services/db.service');
 const errors = require('../errors');
+const helpers = require('../helpers');
 
 const facebookRejectPage = require('../views/facebookRejectPage.marko');
 const deauthoriseConfirmPage = require('../views/confirmationPage.marko');
@@ -13,6 +14,7 @@ router.get('/authenticate', (req, res, next) => {
   if (req.query.error === 'access_denied') {
     return res.marko(facebookRejectPage, {
       hat: req.session.hat,
+      message: "It seems that you've denied the plug access to your Facebook data. Without the correct access, the plug will not be able to function correctly. Please try the login process again by clicking the button below.",
       rumpelLink: 'https://rumpel.hubofallthings.com/'
       });
   }
@@ -41,34 +43,42 @@ router.get('/authenticate', (req, res, next) => {
         return next();
       }
 
-      userPermissions.permissions = permissionArray;
-      userPermissions.hatDomain = req.session.hat.domain;
+      if (helpers.ensureRequiredPermissionsGiven(permissionArray)) {
+        userPermissions.permissions = permissionArray;
+        userPermissions.hatDomain = req.session.hat.domain;
 
-      db.upsertUser(userPermissions, (err, newUserRecord, rawResult) => {
-        if (err) {
-          console.log(`[ERROR][${new Date()}]`, err);
-          req.dataplug = { statusCode: '500' };
-          return next();
-        }
-
-        db.updateAccessToken(newUserRecord.hatDomain, newUserRecord.accessToken, (err, dbResponse) => {
+        db.upsertUser(userPermissions, (err, newUserRecord, rawResult) => {
           if (err) {
             console.log(`[ERROR][${new Date()}]`, err);
             req.dataplug = { statusCode: '500' };
             return next();
           }
 
-          req.session.save((err) => {
-            if (rawResult.lastErrorObject.updatedExisting) {
-              console.log("[LOGIN] Updated user credentials.");
-              return res.redirect('/dataplug/main');
-            } else {
-              console.log("[LOGIN] Created new user.");
-              return res.redirect('/dataplug/options');
+          db.updateAccessToken(newUserRecord.hatDomain, newUserRecord.accessToken, (err, dbResponse) => {
+            if (err) {
+              console.log(`[ERROR][${new Date()}]`, err);
+              req.dataplug = { statusCode: '500' };
+              return next();
             }
+
+            req.session.save((err) => {
+              if (rawResult.lastErrorObject.updatedExisting) {
+                console.log("[LOGIN] Updated user credentials.");
+                return res.redirect('/dataplug/complete');
+              } else {
+                console.log("[LOGIN] Created new user.");
+                return res.redirect('/dataplug/complete');
+              }
+            });
           });
         });
-      });
+      } else {
+        return res.marko(facebookRejectPage, {
+          hat: req.session.hat,
+          message: "It seems that you've denied the plug access to certain parts of your Facebook data. Without the correct access, the plug will not be able to function correctly. Please try the login process again by clicking the button below and making sure that all of the checkboxes are ticked on Facebook's permissions dialog box.",
+          rumpelLink: 'https://rumpel.hubofallthings.com/'
+        });
+      }
     });
   });
 }, errors.renderErrorPage);

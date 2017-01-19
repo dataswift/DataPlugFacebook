@@ -12,4 +12,6 @@ const HatDataSourceSchema = new Schema({
   lastUpdateTime:     String
 });
 
+HatDataSourceSchema.index({ hatHost: 1, name: 1, source: 1 }, { unique: true });
+
 module.exports = mongoose.model('HatDataSource', HatDataSourceSchema);

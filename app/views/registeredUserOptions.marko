@@ -1,0 +1,20 @@
+<layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
+  <layout-put into="container">
+    <div if(!data.tokenExpired) class="status message">Plug is currently set up and running successfully</div>
+    <div if(data.tokenExpired) class="status message">Facebook data access permission has expired! Please renew access token by clicking the button below and following instructions.</div>
+
+    <p class="tip message">(Still having problems? Try to disconnect the plug below and reconnect to Facebook again)</p>
+
+    <div class="container">
+      <a href="${data.redirectUrl}" class="plug-button">Refresh Facebook Access Token</a>
+    </div>
+
+    <div class="container">
+      <a href="/facebook/deauthorize" class="plug-button">Disconnect Social Plug from Facebook</a>
+    </div>
+
+    <div class="container">
+      <a href="https://rumpel.hubofallthings.com/" class="plug-button">Go To Rumpel</a>
+    </div>
+  </layout-put>
+</layout-use>

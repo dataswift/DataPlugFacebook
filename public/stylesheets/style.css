@@ -227,3 +227,12 @@ input[type='checkbox']:checked.pseudo-checkbox + label:before {
   color: #262626;
   display: inline-block;
 }
+
+.message {
+  font-family: 'Open Sans Regular', sans-serif;
+  font-size: 1em;
+}
+
+.status {
+  margin-bottom: 1em;
+}

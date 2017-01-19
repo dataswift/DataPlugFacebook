@@ -48,3 +48,17 @@ exports.authApplication = (req, res, next) => {
     return res.status(400).json({ error: "Missing authentication headers." })
   }
 };
+
+exports.ensureRequiredPermissionsGiven = (permissionArray) => {
+  const requiredPermissionsArray = config.fb.accessScope.split(",");
+
+  return requiredPermissionsArray.every(permission => {
+    const foundPermission = permissionArray.find(p => p.permission === permission);
+
+    if (foundPermission) {
+      return foundPermission.status === "granted";
+    } else {
+      return false;
+    }
+  });
+};
