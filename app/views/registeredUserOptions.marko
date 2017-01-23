@@ -5,7 +5,7 @@
 
     <p class="tip message">(Still having problems? Try to disconnect the plug below and reconnect to Facebook again)</p>
 
-    <div class="container">
+    <div class="container" if(data.tokenExpired)>
       <a href="${data.redirectUrl}" class="plug-button">Refresh Facebook Access Token</a>
     </div>
 

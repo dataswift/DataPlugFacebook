@@ -2,6 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 
 const db = require('../services/db.service');
 const helpers = require('../helpers');
@@ -20,14 +21,10 @@ router.get('/token/status', helpers.authApplication, (req, res, next) => {
 
     let user = users[0];
 
-    let permissionFound = user.permissions.find(permission => {
-      return permission.permission === 'publish_actions' && permission.status === 'granted';
-    });
-
     let response = {
       phata: req.hat.domain,
       expires: user.validUntil,
-      canPost: !!permissionFound
+      canPost: moment(user.validUntil).isAfter()
     };
 
     return res.status(200).json(response);
