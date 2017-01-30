@@ -4,15 +4,15 @@
 
     <p class="complete message">${data.mainText}</p>
 
-    <div class="container">
-      <a href=data.rumpelLink class="plug-button">Take me back to Rumpel&trade;</a>
+    <div class="link-wrapper">
+      <a href=data.rumpelLink class="btn btn-teal" id="rumpel-link">Back to Web Rumpel&trade;</a>
 
       <span class="complete note">${data.note}</span>
     </div>
 
-    <div class="container facebook" if(data.shareNote)>
+    <div class="link-wrapper facebook" if(data.shareNote)>
       <span class="info">${data.shareNote}</span>
-      <button id="facebook" type="button" class="share-on-facebook"><img src="/facebook-icon.png">Share on Facebook</button>
+      <button id="facebook" type="button" class="btn btn-fb"><img src="/facebook-icon.png">Share on Facebook</button>
     </div>
 
     <script>
@@ -41,5 +41,6 @@
          fjs.parentNode.insertBefore(js, fjs);
        }(document, 'script', 'facebook-jssdk'));
     </script>
+    <script type="text/javascript" src="/js/detectWebview.js"></script>
   </layout-put>
 </layout-use>

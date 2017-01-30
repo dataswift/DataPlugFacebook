@@ -1,10 +1,15 @@
 body {
-  font-family: 'Open Sans Condensed', sans-serif;
+  font-family: 'Open Sans Regular', sans-serif;
   background-color: #262626;
   color: #ffffff;
   font-weight: 300;
   font-size: 11px;
   margin-bottom: 6em;
+}
+
+h1, h2, h3 {
+  font-family: 'Open Sans Condensed', sans-serif;
+  text-transform: uppercase;
 }
 
 .navbar {
@@ -30,12 +35,11 @@ body {
 }
 
 .wrapper {
-  text-align: center;
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 
 .wrapper p {
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
 }
 
 .wrapper ul {
@@ -58,11 +62,7 @@ body {
   text-align: left;
 }
 
-.container {
-  width: 70%;
-}
-
-.container input[type='text'] {
+.form-group input[type='text'] {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -71,13 +71,12 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
   width: 100%;
   border-radius: 0;
-  padding: 10px 15px;
+  padding: 0.7em 0.5em;
   margin-bottom: 1.5em;
   margin-top: 1.5em;
   display: block;
   text-align: center;
-  font-size: 1.2em;
-  font-family: 'Open Sans Regular', sans-serif;
+  font-size: 1.25em;
   -webkit-transition-duration: 0.5s;
           transition-duration: 0.5s;
   font-weight: 300;
@@ -92,22 +91,46 @@ body {
   background-color: white;
 }
 
-.container.facebook {
+.link-wrapper {
   margin-top: 2em;
 }
 
-.container .plug-button {
+.link-wrapper.facebook {
+  margin-top: 4em;
+}
+
+.btn-clear {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-clear:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #ffffff;
+}
+
+.btn-teal {
+  background-color: rgba(0, 150, 136, 0.9);
+  color: white;
+}
+
+.btn-teal:hover {
+  background-color: rgba(0, 150, 136, 0.6);
+}
+
+.form-group .btn,
+.link-wrapper .btn {
   display: block;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 20px;
+  text-transform: uppercase;
+  padding: 0.75em 1em;
   border-radius: 0;
-  font-size: 1.2em;
+  font-size: 1.25em;
   margin: 1em 0;
-  font-weight: 300;
+  font-weight: 500;
   font-family: 'Open Sans Condensed', sans-serif;
   cursor: pointer;
   text-decoration: none;
@@ -115,31 +138,18 @@ body {
   color: #cccccc;
 }
 
-.container .plug-button:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  color: #ffffff;
-}
-
-.container .share-on-facebook {
-  display: block;
+.btn-fb {
   background-color: #3b5998;
   border: 1px solid #29487d;
-  padding: 10px 20px;
+  padding: 0.75em 0.5em;
   border-radius: 0;
-  font-size: 1.2em;
   margin: 1em 0;
-  font-weight: 300;
-  font-family: 'Open Sans Condensed', sans-serif;
-  cursor: pointer;
   color: white;
-  text-decoration: none;
-  width: 100%;
 }
 
-.container img {
+.link-wrapper img {
   max-height: 1.5em;
-  vertical-align: bottom;
+  vertical-align: top;
   margin-right: 0.75em;
 }
 
@@ -235,4 +245,8 @@ input[type='checkbox']:checked.pseudo-checkbox + label:before {
 
 .status {
   margin-bottom: 1em;
+}
+
+.hidden {
+  display: none;
 }

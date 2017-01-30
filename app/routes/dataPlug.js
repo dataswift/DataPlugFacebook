@@ -43,7 +43,7 @@ router.get('/main', (req, res, next) => {
         }
 
         const callbackUrl = config.webServerURL + '/facebook/authenticate';
-        const redirectUrl = `https://www.facebook.com/dialog/oauth?client_id=${config.fb.appID}&redirect_uri=${callbackUrl}&scope=${config.fb.accessScope}`
+        const redirectUrl = `https://www.facebook.com/dialog/oauth?client_id=${config.fb.appID}&redirect_uri=${callbackUrl}&scope=${config.fb.accessScope}&auth_type=reauthenticate`;
 
         if (users.length === 0) {
           return res.redirect(redirectUrl);
@@ -90,8 +90,8 @@ router.get('/complete', (req, res, next) => {
       return res.marko(setupConfirmPage, {
         hat: req.session.hat,
         rumpelLink: 'https://rumpel.hubofallthings.com/',
-        mainText: `The Data Plug has been set up to synchronize data between Facebook and your personal HAT.`,
-        note: `It may take up to 5 minutes before the data appears on Rumpel.`,
+        mainText: `The plug has been successfully activated. Close the current window and refresh your Rumpel application to see the newly acquired data. Alternatively, click the button below to navigate back to Rumpel.`,
+        note: `It may take up to 5 minutes before the data appears on Rumpel applications.`,
         shareNote: 'Tell your friends on Facebook that you now have your Facebook data on your HAT!'
       });
     });

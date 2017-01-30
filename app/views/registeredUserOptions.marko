@@ -1,20 +1,26 @@
 <layout-use("./layout.marko") authenticated=data.hat.authenticated hatDomain=data.hat.domain>
   <layout-put into="container">
-    <div if(!data.tokenExpired) class="status message">Plug is currently set up and running successfully</div>
+    <div if(!data.tokenExpired) class="status message">Your Plug is currently set up and running successfully. Manage all your Data Plugs in Web Rumpel, or return to Rumpel Lite.</div>
     <div if(data.tokenExpired) class="status message">Facebook data access permission has expired! Please renew access token by clicking the button below and following instructions.</div>
 
-    <p class="tip message">(Still having problems? Try to disconnect the plug below and reconnect to Facebook again)</p>
+    <p class="tip message">(Having problems? Try to disconnect the plug and reconnect to Facebook again.)</p>
 
-    <div class="container" if(data.tokenExpired)>
-      <a href="${data.redirectUrl}" class="plug-button">Refresh Facebook Access Token</a>
+    <div class="link-wrapper" if(data.tokenExpired)>
+      <a href="${data.redirectUrl}" class="btn btn-teal">Refresh Access Token</a>
     </div>
 
-    <div class="container">
-      <a href="/facebook/deauthorize" class="plug-button">Disconnect Social Plug from Facebook</a>
+    <div class="link-wrapper">
+      <a href="/facebook/deauthorize" class="btn btn-teal">Disconnect the Plug</a>
     </div>
 
-    <div class="container">
-      <a href="https://rumpel.hubofallthings.com/" class="plug-button">Go To Rumpel</a>
+    <div class="link-wrapper">
+      <a href="https://rumpel.hubofallthings.com/" class="btn btn-teal" id="rumpel-link">Back To Web Rumpel</a>
     </div>
+
+    <div class="link-wrapper">
+      <a href="rumpellocationtrackerapp://dataplugsapphost/" class="btn btn-teal hidden" id="rumpel-lite-link">Back to Rumpel Lite</a>
+    </div>
+
+    <script type="text/javascript" src="/js/detectWebview.js"></script>
   </layout-put>
 </layout-use>

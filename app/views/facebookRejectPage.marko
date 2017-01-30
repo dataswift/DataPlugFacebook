@@ -4,10 +4,12 @@
 
     <p class="plug-info">${data.message}</p>
 
-    <div class="container">
-      <a href="/dataplug/main" class="plug-button">Back To Login Process</a>
-      <a href=data.rumpelLink class="plug-button">Take me back to Rumpel&trade;</a>
-      <a href="http://www.hatdex.org/acquire-data/" class="plug-button">Learn More About Dataplugs</a>
+    <div class="link-wrapper">
+      <a href="/dataplug/main" class="btn btn-teal">Back To Login Process</a>
+      <a href=data.rumpelLink class="btn btn-teal" id="rumpel-link">Back to Web Rumpel&trade;</a>
+      <a href="http://www.hatdex.org/acquire-data/" class="btn btn-teal">Learn More About Dataplugs</a>
     </div>
+
+    <script type="text/javascript" src="/js/detectWebview.js"></script>
   </layout-put>
 </layout-use>
