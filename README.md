@@ -62,6 +62,6 @@ Now the homepage can be accessed at http://localhost:3000 (assuming the default 
 
 ## License
 
-This work is licensed under the GNU Affero General Public License. Please read the LICENSE file for further details.
+This work is licensed under the Mozilla Public License Version 2.0. Please read the LICENSE file for further details.
 
 ## Happy data syncing!
