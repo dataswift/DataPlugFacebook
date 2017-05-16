@@ -11,7 +11,6 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-const logger = require('morgan');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 require('marko/express');
@@ -20,6 +19,7 @@ require('marko/node-require').install();
 const mongoose = require('./config/db');
 const errors = require('./errors');
 const config = require('./config');
+const logger = require('./config/logger');
 const helpers = require('./helpers');
 
 const updateSvc = require('./services/update.service');
@@ -33,7 +33,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(require('morgan')('combined', { 'stream': logger.stream }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({

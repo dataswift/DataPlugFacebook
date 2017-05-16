@@ -6,7 +6,7 @@
  * Written by Augustinas Markevicius <augustinas.markevicius@hatdex.org> 2016
  */
 
-"user strict";
+'user strict';
 
 const config = require('../config');
 

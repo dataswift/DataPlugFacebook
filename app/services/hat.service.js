@@ -18,6 +18,7 @@ const jwt = require('jsonwebtoken');
 const db = require('../services/db.service');
 const fb = require('../services/fb.service');
 const config = require('../config');
+const logger = require('../config/logger');
 
 var internals = {};
 
@@ -55,8 +56,6 @@ exports.getAccessToken = (hatDomain, callback) => {
     json: true
   };
 
-  console.log("[HAT] Headers", reqOptions.headers);
-
   request.get(reqOptions, (err, res, body) => {
     if (err) return callback(err);
     if (res.statusCode === 401 || res.statusCode === 500) return callback(body);
@@ -89,13 +88,18 @@ exports.updateDataSource = (dataSource, callback) => {
 
     async.waterfall(procedure, (err, records) => {
       if (err && err.message === 'No data to process') {
-        console.log(`[HAT service] Nothing to do.`);
+        logger.info(`${dataSource.hatHost} - Nothing new on Facebook page.`);
         return callback(null, now);
       } else if (err) {
-        console.log(`[HAT service] There has been a problem updating ${dataSource.source} ${dataSource.name} for ${dataSource.hatHost} at ${new Date()}`);
+        logger.error(`${dataSource.hatHost} - error when updating ${dataSource.source} ${dataSource.name}`, err);
         return callback(err);
       } else {
-        console.log(`[HAT service] Successfully added ${records.length ? records.length : JSON.stringify(records)} records to HAT.`);
+        if (records.length) {
+          logger.info(`${dataSource.hatHost} - successfully added ${records.length} records to HAT.`);
+        } else {
+          logger.error(`${dataSource.hatHost} - error while posting to the HAT.`, records);
+        }
+
         return callback(null, now);
       }
     });
@@ -154,7 +158,10 @@ internals.asyncTranformObjToHat = (hatIdMapping, data, callback) => {
 };
 
 internals.createHatRecords = (hatHost, hatAccessToken, records, callback) => {
-  console.log(`[HAT] About to post records to ${hatHost} with accessToken ${hatAccessToken}.`);
+  logger.info(`${hatHost} - posting ${records.length} to the HAT.`);
+  if (records.length === 1) {
+    logger.debug(`${hatHost} - posting records: `, records);
+  }
   var client = new hat.Client(config.protocol + '://' + hatHost, hatAccessToken);
   client.createMultipleRecords(records, callback);
 };

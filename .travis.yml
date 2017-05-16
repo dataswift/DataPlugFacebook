@@ -9,8 +9,7 @@ script:
   - docker build -t hubofallthings/facebook-dataplug .
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "dev" ]; then
+  - if [ "$TRAVIS_BRANCH" == "troubleshooting" ]; then
     docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
     docker push hubofallthings/facebook-dataplug;
     fi 
-

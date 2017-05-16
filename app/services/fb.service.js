@@ -14,6 +14,7 @@ const _ = require('lodash');
 const moment = require('moment');
 
 const config = require('../config');
+const logger = require('../config/logger');
 const fbReqGenerator = require('../config/fbFields');
 
 exports.exchangeCodeForToken = (code, callback) => {
@@ -125,7 +126,7 @@ exports.getGraphNode = (node, accessToken, lastestUpdateTime, callback) => {
     const dataArray = Array.isArray(data) ? data : [data];
 
     if (dataArray.length < 1) {
-      console.log('[FB] No data to process.')
+      logger.info('No facebook data to process.');
       return callback(new Error('No data to process'));
     }
 
@@ -152,7 +153,7 @@ exports.revokeLogin = (accessToken, callback) => {
       }
 
     } else {
-      console.log('Successfully DEAUTHORIZED.');
+      logger.info('Successfully DEAUTHORIZED.');
       return callback(null);
     }
   });

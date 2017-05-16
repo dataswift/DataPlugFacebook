@@ -12,6 +12,7 @@ const async = require('async');
 const db = require('../services/db.service');
 const hat = require('../services/hat.service');
 const config = require('../config');
+const logger = require('../config/logger');
 
 let internals = {};
 
@@ -19,12 +20,11 @@ let queue = async.queue(work, 1);
 let onQueueJobs = [];
 
 setInterval(() => {
-  console.log(`[Update module][${new Date()}] Checking database for tasks...`);
+  logger.debug(`Checking database for outstanding tasks.`);
 
   db.findDueJobs(onQueueJobs, (err, results) => {
     if (err) {
-      console.log(`[ERROR][Update module][${new Date()}] The has been an error when fetching tasks:`);
-      console.log(err);
+      logger.error(`Fetching outstanding tasks failed`, err);
       return null;
     }
 
@@ -36,10 +36,11 @@ setInterval(() => {
           memo.push({task: 'CREATE_MODEL', dataSource: result.dataSource});
         }
       } else {
-        console.log("[UPDATE] Found 1 flawed update job.");
+        logger.warn(`Flawed update job found: ${result._id}`);
+
         db.updateUpdateJob(result, (err) => {
           if (err) {
-            console.log("Error marking flawed updated job.", err);
+            logger.error(`Error marking flawed updated job ${result._id}.`, err);
           }
         });
       }
@@ -47,7 +48,8 @@ setInterval(() => {
       return memo;
     }, []);
 
-    console.log(`[Update module][${new Date()}] Successfully added ${updateTasks.length} update jobs to queue.`);
+    logger.info(`Added ${updateTasks.length} update jobs to queue.`);
+    logger.debug(updateTasks.map(task => task.dataSource.hatHost));
     return internals.addNewJobs(updateTasks);
   });
 }, config.updateService.dbCheckInterval);
