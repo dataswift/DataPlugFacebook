@@ -19,6 +19,7 @@ const db = require('../services/db.service');
 const fb = require('../services/fb.service');
 const update = require('../services/update.service');
 const mailSvc = require('../services/mail.service');
+const logger = require('../config/logger');
 
 router.use(helpers.authServices);
 
@@ -70,7 +71,7 @@ const postToFb = (accessToken, message, failedAttempts, callback) => {
   fb.post(accessToken, message, (err, facebookId) => {
     if (err && failedAttempts < 4) {
       let backoff = 500 * Math.pow(10, failedAttempts);
-      console.warn(`[WARN] Facebook post in the backoff mode. Attempt: ${failedAttempts + 1}`);
+      logger.warn(`Facebook post is in the backoff mode. Attempt: ${failedAttempts + 1}. Reason: `, err);
       setTimeout(() => postToFb(accessToken, message, ++failedAttempts, callback), backoff);
     } else if (err) {
       callback(err);
@@ -86,6 +87,28 @@ const postToFb = (accessToken, message, failedAttempts, callback) => {
   });
 };
 
+const postFbPhoto = (accessToken, message, photoUrl, failedAttempts, callback) => {
+  fb.postPhoto(accessToken, message, photoUrl, (err, facebookId) => {
+    if (err && failedAttempts < 4) {
+      let backoff = 500 * Math.pow(10, failedAttempts);
+      logger.warn(`Facebook post is in the backoff mode. Attempt: ${failedAttempts + 1}. Reason: `, err);
+      setTimeout(() => postFbPhoto(accessToken, message, photoUrl, ++failedAttempts, callback), backoff);
+    } else if (err) {
+      callback(err);
+    } else {
+      let dbUpdateContent = {
+        facebookId: facebookId,
+        posted: true,
+        postedTime: moment()
+      };
+
+      callback(null, dbUpdateContent);
+    }
+  });
+};
+
+const handleFbPostCompletion =
+
 router.post('/post/create', canPostForUser, (req, res, next) => {
   db.getPost(req.post.notableId, (err, posts) => {
     if (err || posts.length > 0) {
@@ -96,28 +119,53 @@ router.post('/post/create', canPostForUser, (req, res, next) => {
       (err, record) => {
       if (err) return res.status(500).json({ error: "Internal server error."});
 
-      postToFb(req.user.accessToken, req.body.message, 0, (err, dbUpdateContent) => {
-        if (err) {
-          mailSvc.sendErrorNotification(`Dear sysadmin,
+      if (req.body && req.body.photo) {
+        postFbPhoto(req.user.accessToken, req.body.message, req.body.photo, 0, (err, dbUpdateContent) => {
+          if (err) {
+            mailSvc.sendErrorNotification(`Dear sysadmin,
             Social Data Plug was unable to publish facebook post.
             
             Reason: ${toSource(err)}
             
             Record: ${record}`);
-          return console.error("[ERROR] Unable to publish facebook post. Reason: ", err);
-        }
+            return console.error("[ERROR] Unable to publish facebook post. Reason: ", err);
+          }
 
-        console.log(`[FACEBOOK] Successfully sent new post.`);
+          logger.info(`${req.post.hatDomain} - Successfully sent new photo to Facebook.`);
 
-        db.updatePost(record._id, dbUpdateContent, (err, updatedRecord) => {
-          if (err) {
-            console.error(`[ERROR] Failed to update the database after successfully posting to facebook
+          db.updatePost(record._id, dbUpdateContent, (err, updatedRecord) => {
+            if (err) {
+              console.error(`[ERROR] Failed to update the database after successfully posting to facebook
               error: ${err}
               update content: ${dbUpdateContent}
               record: ${record._id}`)
-          }
+            }
+          });
         });
-      });
+      } else {
+        postToFb(req.user.accessToken, req.body.message, 0, (err, dbUpdateContent) => {
+          if (err) {
+            mailSvc.sendErrorNotification(`Dear sysadmin,
+            Social Data Plug was unable to publish facebook post.
+            
+            Reason: ${toSource(err)}
+            
+            Record: ${record}`);
+            return console.error("[ERROR] Unable to publish facebook post. Reason: ", err);
+          }
+
+          logger.info(`${req.post.hatDomain} - Successfully sent new post to Facebook.`);
+
+          db.updatePost(record._id, dbUpdateContent, (err, updatedRecord) => {
+            if (err) {
+              console.error(`[ERROR] Failed to update the database after successfully posting to facebook
+              error: ${err}
+              update content: ${dbUpdateContent}
+              record: ${record._id}`)
+            }
+          });
+        });
+      }
 
       return res.status(200).json({ message: "Post accepted for publishing." });
     });

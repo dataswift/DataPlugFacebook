@@ -66,6 +66,22 @@ exports.post = (accessToken, message, callback) => {
   });
 };
 
+exports.postPhoto = (accessToken, message, photoUrl, callback) => {
+  const reqOptions = {
+    url: 'https://graph.facebook.com/v2.5/me/photos',
+    qs: { access_token: accessToken },
+    body: { caption: message, url: photoUrl },
+    json: true
+  };
+
+  request.post(reqOptions, (err, res, body) => {
+    if (err) return callback(err);
+    if (res.statusCode !== 200) return callback(body);
+
+    return callback(null, body.id);
+  });
+};
+
 exports.update = (accessToken, message, postId, callback) => {
   const reqOptions = {
     url: `https://graph.facebook.com/v2.5/${postId}`,
